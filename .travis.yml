@@ -10,5 +10,4 @@ install:
   - pip install -r requirements-test.txt
 
 script:
-  - pytest --cov mockthink
-  - coverage report --omit="mockthink/test"
+  - pytest --cov mockthink -v
