@@ -1,5 +1,3 @@
-
-
 from collections import defaultdict
 
 from future.utils import iteritems, old_div

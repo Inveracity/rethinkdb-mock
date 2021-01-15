@@ -759,6 +759,11 @@ class IndexCreateByFunc(RBase):
         )
 
 
+class Wait(MonExp):
+    def do_run(self, table_or_seq, arg, scope):
+        pass
+
+
 class IndexRename(Ternary):
     def do_run(self, sequence, old_name, new_name, arg, scope):
         current_db = self.find_db_scope()

@@ -1,7 +1,6 @@
 import rethinkdb.ast as r_ast
 from future.utils import iteritems
 
-
 from . import ast as mt_ast
 from . import util
 
@@ -45,7 +44,6 @@ def handle_generic_monop(Mt_Constructor, node):
 
 @util.curry2
 def handle_generic_binop(Mt_Constructor, node):
-    #raise Exception(dir(node))
     return Mt_Constructor(
         type_dispatch(node._args[0]),
         type_dispatch(node._args[1]),
@@ -144,7 +142,7 @@ def binop_splat(Mt_Constructor, node):
 #   0-ary reql terms which don't need any special handling
 NORMAL_ZEROPS = {
     r_ast.Now: mt_ast.Now,
-    r_ast.DbList: mt_ast.DbList
+    r_ast.DbList: mt_ast.DbList,
 }
 
 
@@ -181,7 +179,8 @@ NORMAL_MONOPS = {
     r_ast.ToEpochTime: mt_ast.ToEpochTime,
     r_ast.Literal: mt_ast.Literal,
     r_ast.Distinct: mt_ast.Distinct,
-    r_ast.ISO8601: mt_ast.ISO8601
+    r_ast.ISO8601: mt_ast.ISO8601,
+    r_ast.Wait: mt_ast.Wait
 }
 
 #   2-ary reql terms which don't need any special handling

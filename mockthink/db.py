@@ -7,7 +7,6 @@ from future.utils import iteritems
 from . import rtime, util
 from .rql_rewrite import rewrite_query
 from .scope import Scope
-from past.builtins import xrange
 
 
 def fill_missing_report_results(report):
@@ -311,6 +310,9 @@ class MockThinkConn(object):
 
     def _start(self, rql_query, **global_optargs):
         return self.mockthink_parent.run_query(rewrite_query(rql_query))
+
+    def is_open(self):
+        return True
 
 
 class MockThink(object):
