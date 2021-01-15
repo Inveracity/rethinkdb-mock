@@ -1,3 +1,4 @@
 rethinkdb>=2.4.8
 future==0.18.2
 python-dateutil==2.8.1
+pytest-server-fixtures==1.7.0
