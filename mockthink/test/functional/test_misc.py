@@ -348,8 +348,6 @@ class TestObjectManip(MockTest):
             ['id', 'attributes', 'sam-attr']
         ]
 
-        #res = list(r.db('y').table('people').run(conn))
-        #raise Exception(repr(res[0].keys()))
         result = list(r.db('y').table('people').map(
             lambda d: d.keys()
         ).run(conn))
@@ -484,4 +482,3 @@ class TestError(MockTest):
             rql_err = err
             assertEqual('msg', err.message)
         assert(isinstance(rql_err, RqlRuntimeError))
-
