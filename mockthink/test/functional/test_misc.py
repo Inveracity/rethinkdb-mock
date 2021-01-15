@@ -1,5 +1,5 @@
-import rethinkdb as r
-from rethinkdb import RqlRuntimeError
+from rethinkdb import r
+from rethinkdb.errors import RqlRuntimeError
 
 from mockthink import util
 from mockthink.test.common import as_db_and_table, assertEqUnordered, assertEqual
@@ -281,7 +281,7 @@ class TestSets(MockTest):
         result = r.db('z').table('t').map(
             lambda doc: doc['simple'].set_insert('y')
         ).run(conn)
-        result = map(lambda d: set(d), result)
+        result = [set(d) for d in result]
         assertEqUnordered(expected, result)
 
     def test_set_union(self, conn):
@@ -292,7 +292,7 @@ class TestSets(MockTest):
         result = r.db('z').table('t').map(
             lambda doc: doc['simple'].set_union(['y', 'a'])
         ).run(conn)
-        result = map(lambda d: set(d), result)
+        result = [set(d) for d in result]
         assertEqUnordered(expected, result)
 
     def test_set_intersection(self, conn):
@@ -303,7 +303,7 @@ class TestSets(MockTest):
         result = r.db('z').table('t').map(
             lambda doc: doc['simple'].set_intersection(['x', 'y'])
         ).run(conn)
-        result = map(lambda d: set(d), result)
+        result = [set(d) for d in result]
         assertEqUnordered(expected, result)
 
     def test_set_difference(self, conn):
@@ -315,7 +315,7 @@ class TestSets(MockTest):
             lambda doc: doc['simple'].set_difference(['y'])
         ).run(conn)
         result = list(result)
-        result = map(lambda d: set(d), result)
+        result = [set(d) for d in result]
         assertEqUnordered(expected, result)
 
 
@@ -347,9 +347,13 @@ class TestObjectManip(MockTest):
             ['id', 'attributes', 'joe-attr'],
             ['id', 'attributes', 'sam-attr']
         ]
+
+        #res = list(r.db('y').table('people').run(conn))
+        #raise Exception(repr(res[0].keys()))
         result = list(r.db('y').table('people').map(
             lambda d: d.keys()
         ).run(conn))
+
         assertEqual(3, len(result[0]))
         assertEqual(3, len(result[1]))
         key_set = set(util.cat(result[0], result[1]))

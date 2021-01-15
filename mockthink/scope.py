@@ -1,8 +1,11 @@
-from __future__ import print_function
+
+
+
 class NotInScopeErr(Exception):
     def __init__(self, msg):
         print(msg)
         self.msg = msg
+
 
 class Scope(object):
     def __init__(self, values):
@@ -15,7 +18,7 @@ class Scope(object):
         elif hasattr(self, 'parent'):
             result = self.parent.get_sym(x)
         if result == None:
-            msg = "symbol not defined: %s" % x
+            msg = f"symbol not defined: {x}"
             raise NotInScopeErr(msg)
         return result
 
@@ -34,4 +37,3 @@ class Scope(object):
 
     def log(self):
         pprint(self.get_flattened())
-

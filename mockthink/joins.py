@@ -1,6 +1,7 @@
 from pprint import pprint
 from . import util
 
+
 def do_outer_join(pred, left, right):
     out = []
     for left_elem in left:
@@ -14,6 +15,7 @@ def do_outer_join(pred, left, right):
         out = util.cat(out, matches)
     return out
 
+
 def do_inner_join(pred, left, right):
     out = []
     for left_elem in left:
@@ -21,6 +23,7 @@ def do_inner_join(pred, left, right):
             if pred(left_elem, right_elem):
                 out.append({'left': left_elem, 'right': right_elem})
     return out
+
 
 def do_eq_join(left_field, left, right_field, right):
     out = []

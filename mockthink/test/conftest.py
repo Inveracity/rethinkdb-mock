@@ -1,7 +1,3 @@
-# coding: utf-8
-
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 import pytest
 import rethinkdb
 from pytest_server_fixtures.rethink import rethink_server, rethink_server_sess
@@ -34,7 +30,7 @@ def conn_sess(request):
     elif conn_type == "mockthink":
         conn = MockThink(as_db_and_table('nothing', 'nothing', [])).get_conn()
     else:
-        pytest.exit("Unknown mockthink test connection type: " + conn_type)
+        pytest.exit(f"Unknown mockthink test connection type: {conn_type}")
     return conn
 
 

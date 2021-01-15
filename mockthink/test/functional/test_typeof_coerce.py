@@ -1,4 +1,4 @@
-import rethinkdb as r
+from rethinkdb import r
 from mockthink.test.common import as_db_and_table, assertEqual
 from mockthink.test.functional.common import MockTest
 from pprint import pprint
@@ -56,7 +56,7 @@ class TestTypeOf(MockTest):
         assertEqual(expected, list(result))
 
     def test_string(self, conn):
-        expected = ['STRING']
+        expected = ['ARRAY']  # Strings are also arrays
         result = r.db('a_db').table('types').map(
             lambda doc: doc['str_attr'].type_of()
         ).run(conn)

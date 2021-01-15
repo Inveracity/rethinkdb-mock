@@ -1,5 +1,3 @@
-from __future__ import print_function
-
 import contextlib
 from pprint import pprint
 
@@ -11,6 +9,7 @@ from .rql_rewrite import rewrite_query
 from .scope import Scope
 from past.builtins import xrange
 
+
 def fill_missing_report_results(report):
     defaults = {
         'errors': 0,
@@ -21,13 +20,14 @@ def fill_missing_report_results(report):
     }
     return util.extend(defaults, report)
 
+
 def replace_array_elems_by_id(existing, replace_with):
     report = {
         'replaced': 0,
         'changes': []
     }
     elem_index_by_id = {}
-    for index in xrange(0, len(existing)):
+    for index in range(0, len(existing)):
         elem = existing[index]
         elem_index_by_id[util.getter('id')(elem)] = index
 
@@ -45,6 +45,7 @@ def replace_array_elems_by_id(existing, replace_with):
 
     return to_return, fill_missing_report_results(report)
 
+
 def remove_array_elems_by_id(existing, to_remove):
     report = {
         'deleted': 0,
@@ -57,6 +58,7 @@ def remove_array_elems_by_id(existing, to_remove):
             report['changes'].append({'old_val': elem, 'new_val': None})
             result.remove(elem)
     return result, report
+
 
 def insert_into_table_with_conflict_setting(existing, to_insert, conflict):
     assert(conflict in ('error', 'update', 'replace'))
@@ -94,6 +96,7 @@ def insert_into_table_with_conflict_setting(existing, to_insert, conflict):
     not_updated = [row for row in existing if row['id'] not in seen]
     result = not_updated + result
     return result, fill_missing_report_results(result_report)
+
 
 class MockTableData(object):
     def __init__(self, name, rows, indexes):
@@ -143,7 +146,7 @@ class MockTableData(object):
         return MockTableData(self.name, self.rows, new_indexes)
 
     def list_indexes(self):
-        return self.indexes.keys()
+        return list(self.indexes.keys())
 
     def index_exists(self, index):
         return index in self.indexes
@@ -168,7 +171,8 @@ class MockTableData(object):
         return self.rows[index]
 
     def __repr__(self):
-        return '<MockTableData name="%s"/>' % self.name
+        return f'<MockTableData name="{self.name}"/>'
+
 
 class MockDbData(object):
     def __init__(self, tables_by_name):
@@ -178,7 +182,7 @@ class MockDbData(object):
         return self.set_table(table_name, MockTableData(table_name, [], {}))
 
     def list_tables(self):
-        return self.tables_by_name.keys()
+        return list(self.tables_by_name.keys())
 
     def drop_table(self, table_name):
         return MockDbData(util.without([table_name], self.tables_by_name))
@@ -191,6 +195,7 @@ class MockDbData(object):
         tables = util.obj_clone(self.tables_by_name)
         tables[table_name] = new_table_instance
         return MockDbData(tables)
+
 
 class MockDb(object):
     def __init__(self, dbs_by_name):
@@ -225,7 +230,7 @@ class MockDb(object):
         return MockDb(util.without([db_name], self.dbs_by_name))
 
     def list_dbs(self):
-        return self.dbs_by_name.keys()
+        return list(self.dbs_by_name.keys())
 
     def replace_table_in_db(self, db_name, table_name, table_data_instance):
         assert(isinstance(table_data_instance, MockTableData))
@@ -279,6 +284,7 @@ class MockDb(object):
     def get_now_time(self):
         return self.mockthink.get_now_time()
 
+
 def objects_from_pods(data):
     dbs_by_name = {}
     for db_name, db_data in iteritems(data['dbs']):
@@ -295,18 +301,22 @@ def objects_from_pods(data):
         dbs_by_name[db_name] = MockDbData(tables_by_name)
     return MockDb(dbs_by_name)
 
+
 class MockThinkConn(object):
     def __init__(self, mockthink_parent):
         self.mockthink_parent = mockthink_parent
+
     def reset_data(self, data):
         self.mockthink_parent._modify_initial_data(data)
+
     def _start(self, rql_query, **global_optargs):
         return self.mockthink_parent.run_query(rewrite_query(rql_query))
+
 
 class MockThink(object):
     def __init__(self, initial_data):
         self._modify_initial_data(initial_data)
-        self.tzinfo = rethinkdb.make_timezone('00:00')
+        self.tzinfo = rethinkdb.r.make_timezone('00:00')
 
     def _modify_initial_data(self, new_data):
         self.initial_data = new_data
@@ -340,7 +350,7 @@ class MockThink(object):
         return result
 
     def pprint_query_ast(self, query):
-        query = "%s" % query
+        query = f"{query}"
         print(query)
 
     def reset(self):

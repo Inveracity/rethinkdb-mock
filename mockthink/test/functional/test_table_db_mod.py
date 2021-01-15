@@ -1,5 +1,5 @@
-import rethinkdb as r
-from rethinkdb import RqlRuntimeError
+from rethinkdb import r
+from rethinkdb.errors import RqlRuntimeError
 
 from mockthink import util
 from mockthink.test.common import as_db_and_table, assertEqual
@@ -115,4 +115,4 @@ class TestDbMod(MockTest):
 
     def db_list(self, conn):
         # rethinkdb is special and always present; we don't care, for these tests
-        return set(r.db_list().run(conn)) - {u'rethinkdb'}
+        return set(r.db_list().run(conn)) - {'rethinkdb'}

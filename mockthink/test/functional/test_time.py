@@ -1,9 +1,8 @@
 import datetime
-import rethinkdb as r
+from rethinkdb import r
 from pprint import pprint
 
-from rethinkdb import RqlCompileError, RqlDriverError
-from rethinkdb.errors import ReqlDriverCompileError
+from rethinkdb.errors import ReqlDriverCompileError, RqlCompileError, RqlDriverError
 from rethinkdb.ast import RqlTzinfo
 
 from mockthink.test.common import as_db_and_table, assertEqual, assertEqUnordered

@@ -1,11 +1,11 @@
-from __future__ import absolute_import, division, print_function, unicode_literals
+
 
 from pprint import pprint
 
 import pytest
-import rethinkdb as r
+from rethinkdb import r
 from future.utils import text_type
-from rethinkdb import RqlRuntimeError
+from rethinkdb.errors import RqlRuntimeError
 
 from mockthink.test.common import as_db_and_table, assertEqUnordered, assertEqual
 from mockthink.test.functional.common import MockTest

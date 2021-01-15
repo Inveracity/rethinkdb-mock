@@ -61,8 +61,8 @@ class TestJoins(unittest.TestCase):
         )
 
     def test_inner_join(self):
-        left = range(1, 5)
-        right = range(1, 5)
+        left = list(range(1, 5))
+        right = list(range(1, 5))
         expected = [
             {'left': 2, 'right': 1},
             {'left': 3, 'right': 1},
@@ -78,8 +78,8 @@ class TestJoins(unittest.TestCase):
         )
 
     def test_outer_join(self):
-        left = range(1, 6)
-        right = range(1, 6)
+        left = list(range(1, 6))
+        right = list(range(1, 6))
         expected = [
             {'left': 1},
             {'left': 2},

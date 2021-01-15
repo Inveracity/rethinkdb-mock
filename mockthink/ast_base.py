@@ -1,5 +1,5 @@
 from future.utils import iteritems
-from rethinkdb import RqlCompileError, RqlRuntimeError
+from rethinkdb.errors import RqlCompileError, RqlRuntimeError
 
 from . import util
 
@@ -55,14 +55,14 @@ class RBase(object):
         return func, is_multi
 
     def raise_rql_runtime_error(self, msg):
-        from rethinkdb import RqlRuntimeError
+        from rethinkdb.errors import RqlRuntimeError
         # temporary jankiness to get it working
         # doing it this way means error messages won't
         # be properly printed
         term = AttrHaving({
             'args': (),
             'optargs': {},
-            'compose': (lambda x,y: 'COMPOSED')
+            'compose': (lambda x, y: 'COMPOSED')
         })
         raise RqlRuntimeError(msg, term, [])
 
@@ -70,7 +70,7 @@ class RBase(object):
         term = AttrHaving({
             'args': (),
             'optargs': {},
-            'compose': (lambda x,y: 'COMPOSED')
+            'compose': (lambda x, y: 'COMPOSED')
         })
         raise RqlCompileError(msg, term, [])
 
@@ -78,15 +78,17 @@ class RBase(object):
         if hasattr(self, 'mockdb_ref'):
             other.mockdb_ref = self.mockdb_ref
 
+
 class RDatum(RBase):
     def __init__(self, val, optargs={}):
         self.val = val
 
     def __str__(self):
-        return "<DATUM: %s>" % self.val
+        return f"<DATUM: {self.val}>"
 
     def run(self, arg, scope):
         return self.val
+
 
 class RFunc(RBase):
     def __init__(self, param_names, body, optargs={}):
@@ -104,9 +106,10 @@ class RFunc(RBase):
         self.set_mock_ref(self.body)
         if not isinstance(args, list):
             args = [args]
-        bound = util.as_obj(zip(self.param_names, args))
+        bound = util.as_obj(list(zip(self.param_names, args)))
         call_scope = scope.push(bound)
         return self.body.run(None, call_scope)
+
 
 class MonExp(RBase):
     def __init__(self, left, optargs={}):
@@ -115,10 +118,10 @@ class MonExp(RBase):
 
     def __str__(self):
         class_name = self.__class__.__name__
-        return "<%s: %s>" % (class_name, self.left)
+        return f"<{class_name}: {self.left}>"
 
     def do_run(self, left, arg, scope):
-        raise NotImplementedError("method do_run not defined in class %s" % self.__class__.__name__)
+        raise NotImplementedError(f"method do_run not defined in class {self.__class__.__name__}")
 
     def run(self, arg, scope):
         self.set_mock_ref(self.left)
@@ -134,10 +137,10 @@ class BinExp(RBase):
 
     def __str__(self):
         class_name = self.__class__.__name__
-        return "<%s: (%s, %s)>" % (class_name, self.left, self.right)
+        return f"<{class_name}: ({self.left}, {self.right})>"
 
     def do_run(self, left, right, arg, scope):
-        raise NotImplementedError("method do_run not defined in class %s" % self.__class__.__name__)
+        raise NotImplementedError(f"method do_run not defined in class {self.__class__.__name__}")
 
     def run(self, arg, scope):
         self.set_mock_ref(self.left)
@@ -155,7 +158,7 @@ class Ternary(RBase):
         self.optargs = optargs
 
     def do_run(self, left, middle, right, arg, scope):
-        raise NotImplementedError("method do_run not defined in class %s" % self.__class__.__name__)
+        raise NotImplementedError(f"method do_run not defined in class {self.__class__.__name__}")
 
     def run(self, arg, scope):
         for part in ('left', 'middle', 'right'):
@@ -165,6 +168,7 @@ class Ternary(RBase):
         right = self.right.run(arg, scope)
         return self.do_run(left, middle, right, arg, scope)
 
+
 class ByFuncBase(RBase):
     def __init__(self, left, right, optargs={}):
         self.left = left
@@ -172,14 +176,15 @@ class ByFuncBase(RBase):
         self.optargs = optargs
 
     def do_run(self, left, map_fn, arg, scope):
-        raise NotImplementedError("method do_run not defined in class %s" % self.__class__.__name__)
+        raise NotImplementedError(f"method do_run not defined in class {self.__class__.__name__}")
 
     def run(self, arg, scope):
         self.set_mock_ref(self.left)
         self.set_mock_ref(self.right)
         left = self.left.run(arg, scope)
-        map_fn = lambda x: self.right.run(x, scope)
+        def map_fn(x): return self.right.run(x, scope)
         return self.do_run(left, map_fn, arg, scope)
+
 
 class MakeObj(RBase):
     def __init__(self, vals, **kwargs):
@@ -192,6 +197,7 @@ class MakeObj(RBase):
             out[k] = v.run(arg, scope)
         return out
 
+
 class MakeArray(RBase):
     def __init__(self, vals):
         self.vals = vals
@@ -203,6 +209,7 @@ class MakeArray(RBase):
             out.append(elem.run(arg, scope))
         return out
 
+
 class LITERAL_OBJECT(dict):
     @staticmethod
     def from_dict(a_dict):
@@ -211,10 +218,12 @@ class LITERAL_OBJECT(dict):
             out[k] = v
         return out
 
+
 class LITERAL_LIST(list):
     @staticmethod
     def from_list(a_list):
         return LITERAL_LIST([elem for elem in a_list])
+
 
 def contains_literals(to_check):
     if is_literal(to_check):
@@ -235,6 +244,7 @@ def contains_literals(to_check):
         return False
     return False
 
+
 def has_nested_literal(to_check):
     if isinstance(to_check, LITERAL_OBJECT):
         for k, v in iteritems(to_check):
@@ -253,6 +263,7 @@ def has_nested_literal(to_check):
             if has_nested_literal(v):
                 return True
     return False
+
 
 def is_literal(x):
     return isinstance(x, LITERAL_OBJECT) or isinstance(x, LITERAL_LIST)

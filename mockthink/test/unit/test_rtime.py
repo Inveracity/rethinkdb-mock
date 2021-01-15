@@ -7,7 +7,7 @@ from ... import rtime
 
 class TestRTime(unittest.TestCase):
     def test_to_date(self):
-        timezone = rethinkdb.make_timezone('00:00')
+        timezone = rethinkdb.r.make_timezone('00:00')
         dt = datetime.datetime(2014, 6, 3, 12, 5, 36, tzinfo=timezone)
         as_date = rtime.to_date(dt)
         assertEqual(2014, as_date.year)

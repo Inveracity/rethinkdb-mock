@@ -1,4 +1,4 @@
-import rethinkdb as r
+from rethinkdb import r
 from mockthink.test.common import as_db_and_table, assertEqUnordered
 from mockthink.test.functional.common import MockTest
 from pprint import pprint
@@ -164,9 +164,9 @@ class TestSample(MockTest):
     @staticmethod
     def get_data():
         data = [
-            {'id': 'one', 'data': range(10, 20)},
-            {'id': 'two', 'data': range(20, 30)},
-            {'id': 'three', 'data': range(30, 40)}
+            {'id': 'one', 'data': list(range(10, 20))},
+            {'id': 'two', 'data': list(range(20, 30))},
+            {'id': 'three', 'data': list(range(30, 40))}
         ]
         return as_db_and_table('db', 'things', data)
 

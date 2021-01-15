@@ -1,8 +1,8 @@
 # coding: utf-8
 
-from __future__ import absolute_import, division, print_function, unicode_literals
 
-import rethinkdb as r
+
+from rethinkdb import r
 
 from mockthink.test.common import assertEqUnordered, assertEqual
 from . import MockTest

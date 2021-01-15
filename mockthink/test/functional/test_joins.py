@@ -1,4 +1,4 @@
-import rethinkdb as r
+from rethinkdb import r
 
 from mockthink.test.common import assertEqUnordered
 from mockthink.test.functional.common import MockTest
