@@ -7,3 +7,4 @@ tmp
 .tox/
 .idea/
 .coverage
+.vscode/
