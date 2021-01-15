@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/Inveracity/mockthink.svg?branch=master)](https://travis-ci.com/Inveracity/mockthink)
+
 # MockThink
 
 MockThink is an in-process Python clone of RethinkDB's API.  For testing.
