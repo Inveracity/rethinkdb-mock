@@ -1,0 +1,14 @@
+language: python
+
+# sudo false implies containerized builds
+sudo: false
+
+python:
+  - 3.9
+
+install:
+  - pip install -r requirements-test.txt
+
+script:
+  - pytest --cov mockthink
+  - coverage report --omit="mockthink/test"
