@@ -56,7 +56,7 @@ class TestTypeOf(MockTest):
         assertEqual(expected, list(result))
 
     def test_string(self, conn):
-        expected = ['ARRAY']  # Strings are also arrays
+        expected = ['STRING']
         result = r.db('a_db').table('types').map(
             lambda doc: doc['str_attr'].type_of()
         ).run(conn)

@@ -1,5 +1,3 @@
-
-
 from rethinkdb.errors import RqlRuntimeError, RqlDriverError, RqlCompileError
 import operator
 import random
@@ -9,7 +7,6 @@ import dateutil.parser
 from pprint import pprint
 from future.utils import iteritems, text_type
 from past.utils import old_div
-from past.builtins import str
 
 from . import util, joins, rtime
 from .scope import Scope
@@ -17,7 +14,6 @@ from .scope import Scope
 from . import ast_base
 from .ast_base import RBase, MonExp, BinExp, Ternary, ByFuncBase
 from .ast_base import LITERAL_OBJECT, LITERAL_LIST, RDatum, RFunc, MakeObj, MakeArray
-from past.builtins import filter
 
 
 # #################
