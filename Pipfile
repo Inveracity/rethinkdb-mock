@@ -6,14 +6,14 @@ name = "pypi"
 [dev-packages]
 flake8 = "*"
 flake8-isort = "*"
-future = "*"
 isort = "*"
 pytest = "*"
 pytest-cov = "*"
 pytest-server-fixtures = "*"
-python-dateutil = "*"
 
 [packages]
+future = "*"
+python-dateutil = "*"
 rethinkdb = ">=2.4.8"
 
 [requires]
