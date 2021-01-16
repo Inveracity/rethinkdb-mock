@@ -219,7 +219,8 @@ NORMAL_BINOPS = {
     r_ast.TableCreate: mt_ast.TableCreate,
     r_ast.TableDrop: mt_ast.TableDrop,
     r_ast.Default: mt_ast.RDefault,
-    r_ast.CoerceTo: mt_ast.CoerceTo
+    r_ast.CoerceTo: mt_ast.CoerceTo,
+    r_ast.Limit: mt_ast.Limit
 }
 
 
