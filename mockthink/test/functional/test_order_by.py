@@ -68,6 +68,14 @@ class TestOrderByOne(MockTest):
         result = r.db('y').table('scores').order_by(r.desc('score')).run(conn)
         assertEqual(expected, list(result))
 
+    def test_sort_1_attr_2_asc_index(self, conn):
+        expected = [
+            {'id': 'todd', 'age': 52, 'score': 15},
+            {'id': 'joe', 'age': 26, 'score': 60},
+            {'id': 'bill', 'age': 35, 'score': 78},
+        ]
+        result = r.db('y').table('scores').order_by(index='score').run(conn)
+        assertEqual(expected, list(result))
 
 class TestOrderByMulti(MockTest):
     @staticmethod
