@@ -1,7 +1,10 @@
 from rethinkdb import r
-from mockthink.test.common import as_db_and_table, assertEqUnordered, assertEqual
+
+from mockthink.test.common import as_db_and_table
+from mockthink.test.common import assertEqual
+from mockthink.test.common import assertEqUnordered
 from mockthink.test.functional.common import MockTest
-from pprint import pprint
+
 
 class TestMath(MockTest):
     @staticmethod
@@ -50,6 +53,7 @@ class TestMath(MockTest):
         result = r.db('math_db').table('points').map(lambda t: t['x'] * t['y']).run(conn)
         assertEqUnordered(expected, list(result))
 
+
 class TestMath2(MockTest):
     @staticmethod
     def get_data():
@@ -97,6 +101,7 @@ class TestMath2(MockTest):
         ).run(conn)
         assertEqual(expected, set(list(result)))
 
+
 class TestRandom(MockTest):
     @staticmethod
     def get_data():
@@ -135,4 +140,3 @@ class TestRandom(MockTest):
         assert(result <= 20)
         assert(result >= 10)
         assert(type(result) == float)
-

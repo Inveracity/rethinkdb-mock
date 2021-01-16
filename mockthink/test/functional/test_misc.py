@@ -2,7 +2,9 @@ from rethinkdb import r
 from rethinkdb.errors import RqlRuntimeError
 
 from mockthink import util
-from mockthink.test.common import as_db_and_table, assertEqUnordered, assertEqual
+from mockthink.test.common import as_db_and_table
+from mockthink.test.common import assertEqual
+from mockthink.test.common import assertEqUnordered
 from mockthink.test.functional.common import MockTest
 
 
@@ -45,6 +47,7 @@ class TestGetAll(MockTest):
         ]
         result = r.db('x').table('people').get_all('bob-id').run(conn)
         assertEqual(expected, list(result))
+
 
 class TestFiltering(MockTest):
     @staticmethod
@@ -102,12 +105,13 @@ class TestMapping(MockTest):
     def test_map_missing_field_no_default(self, conn):
         err = None
         try:
-            result = r.db('x').table('people').map(
+            r.db('x').table('people').map(
                 lambda p: p['missing'] > 15
             ).run(conn)
         except RqlRuntimeError as e:
             err = e
         assert(isinstance(err, RqlRuntimeError))
+
 
 class TestBracket(MockTest):
     @staticmethod
@@ -146,6 +150,7 @@ class TestBracket(MockTest):
         result = r.db('some_db').table('things').map(lambda t: t['values']['c']).run(conn)
         assertEqUnordered(expected, list(result))
 
+
 class TestHasFields(MockTest):
     @staticmethod
     def get_data():
@@ -173,6 +178,7 @@ class TestHasFields(MockTest):
         ]
         result = r.db('x').table('people').has_fields(['last_name', 'age']).run(conn)
         assertEqUnordered(expected, list(result))
+
 
 class TestIsEmpty(MockTest):
     @staticmethod
@@ -234,15 +240,15 @@ class TestDo(MockTest):
 
     def test_do_simple_2(self, conn):
         result = r.do(r.db('generic').table('table').get('two'),
-            lambda d: d['name']
-        ).run(conn)
+                      lambda d: d['name']
+                      ).run(conn)
         assertEqual('Two', result)
 
     def test_do_two(self, conn):
         base = r.db('generic').table('table')
         result = r.do(base.get('one'), base.get('two'),
-            lambda d1, d2: [d1['name'], d2['name']]
-        ).run(conn)
+                      lambda d1, d2: [d1['name'], d2['name']]
+                      ).run(conn)
         assertEqual(['One', 'Two'], result)
 
     def test_do_three(self, conn):
@@ -343,11 +349,6 @@ class TestObjectManip(MockTest):
         return as_db_and_table('y', 'people', data)
 
     def test_keys_document(self, conn):
-        expected = [
-            ['id', 'attributes', 'joe-attr'],
-            ['id', 'attributes', 'sam-attr']
-        ]
-
         result = list(r.db('y').table('people').map(
             lambda d: d.keys()
         ).run(conn))
@@ -357,12 +358,7 @@ class TestObjectManip(MockTest):
         key_set = set(util.cat(result[0], result[1]))
         assertEqual(set(['id', 'attributes', 'joe-attr', 'sam-attr']), key_set)
 
-
     def test_keys_nested(self, conn):
-        expected = [
-            ['face', 'toes'],
-            ['face', 'blog']
-        ]
         result = list(r.db('y').table('people').map(
             lambda d: d['attributes'].keys()
         ).run(conn))
@@ -373,7 +369,6 @@ class TestObjectManip(MockTest):
         assertEqual(set(['face', 'toes', 'blog']), key_set)
 
 
-
 class TestJson(MockTest):
     @staticmethod
     def get_data():
@@ -382,6 +377,7 @@ class TestJson(MockTest):
             {'id': 'two'}
         ]
         return as_db_and_table('d', 't', data)
+
     def test_update_with_json(self, conn):
         expected = [
             {'id': 'one', 'nums': [1, 2, 3]},
@@ -391,6 +387,7 @@ class TestJson(MockTest):
             lambda doc: doc.merge(r.json('{"nums": [1, 2, 3]}'))
         ).run(conn)
         assertEqUnordered(expected, list(result))
+
 
 class TestReduce(MockTest):
     @staticmethod
@@ -412,7 +409,6 @@ class TestReduce(MockTest):
             lambda elem, acc: elem + acc
         ).run(conn)
         assertEqual(expected, result)
-
 
 
 class TestBranch(MockTest):
@@ -442,6 +438,7 @@ class TestBranch(MockTest):
         ).run(conn)
         result = list(result)
         assertEqUnordered(expected, list(result))
+
 
 class TestSync(MockTest):
     @staticmethod

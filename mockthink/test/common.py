@@ -1,12 +1,10 @@
-
-
 import unittest
 
-from rethinkdb import r
 from future.utils import iteritems
+from rethinkdb import r
 
-import mockthink.util as util
 from mockthink.db import MockThinkConn
+import mockthink.util as util
 
 
 def real_stock_data_load(data, connection):
@@ -21,8 +19,10 @@ def real_stock_data_load(data, connection):
             r.db(db_name).table_create(table_name).run(connection)
             r.db(db_name).table(table_name).insert(table_data).run(connection)
 
+
 def mock_stock_data_load(data, connection):
     connection.reset_data(data)
+
 
 def load_stock_data(data, connection):
     if isinstance(connection, MockThinkConn):
@@ -50,6 +50,7 @@ def as_db_and_table(db_name, table_name, data):
             }
         }
     }
+
 
 class TestCase(unittest.TestCase):
     def assertEqUnordered(self, x, y, msg=''):

@@ -1,11 +1,8 @@
-# coding: utf-8
-
-
-
 from rethinkdb import r
 
-from mockthink.test.common import assertEqUnordered, assertEqual
-from . import MockTest
+from mockthink.test.common import assertEqual
+from mockthink.test.common import assertEqUnordered
+from mockthink.test.integration import MockTest
 
 
 class TestThings(MockTest):
@@ -134,4 +131,3 @@ class TestThings(MockTest):
             }
         ]
         assertEqUnordered(expected, list(query.run(conn)))
-

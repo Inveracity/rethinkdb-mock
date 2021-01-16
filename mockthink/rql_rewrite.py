@@ -1,8 +1,9 @@
-import rethinkdb.ast as r_ast
 from future.utils import iteritems
+import rethinkdb.ast as r_ast
 
-from . import ast as mt_ast
-from . import util
+from mockthink import ast as mt_ast
+from mockthink import ast_base
+from mockthink import util
 
 
 def rewrite_query(query):
@@ -110,7 +111,7 @@ def makearray_of_datums(datum_list):
     for elem in datum_list:
         expected_types = (r_ast.Datum, r_ast.Asc, r_ast.Desc, r_ast.Func, r_ast.MakeArray, r_ast.MakeObj)
         if elem.__class__ not in expected_types:
-            raise TypeError('unexpected elem type: %p' % elem)
+            raise TypeError(f'unexpected elem type: {elem}')
         out.append(type_dispatch(elem))
     return mt_ast.MakeArray(out)
 
@@ -360,7 +361,7 @@ for r_type, type_map in iteritems(NORMAL_AGGREGATIONS):
 
 @handles_type(r_ast.Datum)
 def handle_datum(node):
-    return mt_ast.RDatum(node.data)
+    return ast_base.RDatum(node.data)
 
 
 def plain_val_of_datum(datum_node):
@@ -379,7 +380,7 @@ def handle_make_array(node):
 
 @handles_type(r_ast.MakeObj)
 def handle_make_obj(node):
-    return mt_ast.MakeObj({k: type_dispatch(v) for k, v in iteritems(node.optargs)})
+    return ast_base.MakeObj({k: type_dispatch(v) for k, v in iteritems(node.optargs)})
 
 
 @handles_type(r_ast.Func)

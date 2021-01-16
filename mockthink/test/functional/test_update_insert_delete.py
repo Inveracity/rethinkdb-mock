@@ -1,13 +1,13 @@
-
-
 from pprint import pprint
 
+from future.utils import text_type
 import pytest
 from rethinkdb import r
-from future.utils import text_type
 from rethinkdb.errors import RqlRuntimeError
 
-from mockthink.test.common import as_db_and_table, assertEqUnordered, assertEqual
+from mockthink.test.common import as_db_and_table
+from mockthink.test.common import assertEqual
+from mockthink.test.common import assertEqUnordered
 from mockthink.test.functional.common import MockTest
 
 
@@ -48,7 +48,6 @@ class TestReplace(MockTest):
         ).replace({'id': 'kermit-id', 'name': 'Just Kermit'}).run(conn)
         result = r.db('things').table('muppets').run(conn)
         assertEqUnordered(expected, result)
-
 
 
 class TestInsert(MockTest):
@@ -151,9 +150,9 @@ class TestInsertDurability(MockTest):
         result = r.db('things').table('muppets').run(conn)
         assertEqUnordered(expected, list(result))
 
-
     # this isn't effectively testing the mock, since the point is that table.sync() doesn't do anything
     # for the mockthink version.  need to do something better here.
+
     def test_durability_does_nothing_for_mock_2(self, conn):
         expected = [
             {'id': 'kermit-id', 'species': 'frog', 'name': 'Kermit'},
@@ -187,7 +186,7 @@ class TestInsertConflicts(MockTest):
 
         # try to insert and assert that errors are raised
         result_obj = r.db('things').table('muppets').insert({
-                'id': 'kermit-id',
+            'id': 'kermit-id',
         }, conflict='error').run(conn)
         assertEqual(1, result_obj['errors'])
         assertEqual(0, result_obj['inserted'])
@@ -205,7 +204,7 @@ class TestInsertConflicts(MockTest):
 
         # try to insert and assert that errors are raised
         result_obj = r.db('things').table('muppets').insert({
-                'id': 'kermit-id',
+            'id': 'kermit-id',
         }, conflict='error').run(conn)
         assertEqual(1, result_obj['errors'])
         assertEqual(0, result_obj['inserted'])
@@ -234,10 +233,6 @@ class TestInsertConflicts(MockTest):
         assertEqUnordered(expected, list(result))
 
     def test_conflict_update(self, conn):
-        expected = [
-            {'id': 'kermit-id', 'species': 'frog', 'x-key': 'x-val', 'name': 'Updated Kermit'},
-            {'id': 'piggy-id', 'species': 'pig', 'name': 'Ms. Piggy'},
-        ]
         result_obj = r.db('things').table('muppets').insert({
             'id': 'kermit-id',
             'x-key': 'x-val',
@@ -440,6 +435,7 @@ class TestUpdateNestedQuery(MockTest):
             err = e
         assert(isinstance(err, RqlRuntimeError))
 
+
 class TestUpdateReturnChanges(MockTest):
     @staticmethod
     def get_data():
@@ -528,6 +524,7 @@ class TestUpdateRql(MockTest):
         result = r.db('things').table('muppets').get('kermit-id').run(conn)
         assertEqual(expected, result)
 
+
 class TestNestedUpdateNotLit(MockTest):
     @staticmethod
     def get_data():
@@ -538,8 +535,8 @@ class TestNestedUpdateNotLit(MockTest):
                     'pt1': {
                         'x': 'x-1',
                         'y': 'y-1'
-                        }
                     }
+                }
             },
             {
                 'id': 'two',
@@ -547,8 +544,8 @@ class TestNestedUpdateNotLit(MockTest):
                     'pt1': {
                         'x': 'x-2',
                         'y': 'y-2'
-                        }
                     }
+                }
             },
             {
                 'id': 'three',
@@ -567,7 +564,7 @@ class TestNestedUpdateNotLit(MockTest):
                     'x': 'x-1',
                     'y': 'y-1',
                     'z': 'z-1'
-                    }
+                }
             }
         }
 
@@ -585,7 +582,7 @@ class TestNestedUpdateNotLit(MockTest):
                     'x': 'x-1',
                     'y': 'y-1',
                     'z': 'z-1'
-                    }
+                }
             }
         }
 
@@ -603,7 +600,7 @@ class TestNestedUpdateNotLit(MockTest):
                 'pt1': {
                     'x': 'x-1',
                     'y': 'y-1'
-                    }
+                }
             },
             'pt1': {
                 'x': 'x-1',
@@ -673,8 +670,8 @@ class TestLiteral(MockTest):
                     'pt1': {
                         'x': 'x-1',
                         'y': 'y-1'
-                        }
                     }
+                }
             },
             {
                 'id': 'two',
@@ -682,8 +679,8 @@ class TestLiteral(MockTest):
                     'pt1': {
                         'x': 'x-2',
                         'y': 'y-2'
-                        }
                     }
+                }
             },
             {
                 'id': 'three',
@@ -827,6 +824,7 @@ class TestDelete(MockTest):
         result = r.db('ephemeral').table('people').run(conn)
         assertEqUnordered(expected, list(result))
 
+
 class TestDeleteReturnChanges(MockTest):
     @staticmethod
     def get_data():
@@ -881,4 +879,3 @@ class TestDeleteReturnChanges(MockTest):
         assertEqual(2, report['deleted'])
         result = r.db('ephemeral').table('people').run(conn)
         assertEqUnordered(expected, list(result))
-

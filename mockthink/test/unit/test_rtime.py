@@ -1,9 +1,11 @@
-import unittest
 import datetime
+import unittest
+
 import rethinkdb
 
+from mockthink import rtime
 from mockthink.test.common import assertEqual
-from ... import rtime
+
 
 class TestRTime(unittest.TestCase):
     def test_to_date(self):

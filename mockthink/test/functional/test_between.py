@@ -1,6 +1,9 @@
 from rethinkdb import r
-from mockthink.test.common import as_db_and_table, assertEqUnordered
+
+from mockthink.test.common import as_db_and_table
+from mockthink.test.common import assertEqUnordered
 from mockthink.test.functional.common import MockTest
+
 
 class TestBetween(MockTest):
     @staticmethod

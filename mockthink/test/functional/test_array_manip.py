@@ -1,7 +1,11 @@
-from rethinkdb import r
-from mockthink.test.common import as_db_and_table, assertEqUnordered
-from mockthink.test.functional.common import MockTest
 from pprint import pprint
+
+from rethinkdb import r
+
+from mockthink.test.common import as_db_and_table
+from mockthink.test.common import assertEqUnordered
+from mockthink.test.functional.common import MockTest
+
 
 class TestArrayManip(MockTest):
     @staticmethod
@@ -72,6 +76,7 @@ class TestArrayManip(MockTest):
         ).run(conn)
         res = list(result)
         assertEqUnordered(expected, res)
+
 
 class TestUnion(MockTest):
     @staticmethod
@@ -159,6 +164,7 @@ class TestIndexesOf(MockTest):
             )
         ).run(conn)
         assertEqUnordered(expected, list(result))
+
 
 class TestSample(MockTest):
     @staticmethod

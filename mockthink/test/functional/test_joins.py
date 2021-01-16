@@ -3,6 +3,7 @@ from rethinkdb import r
 from mockthink.test.common import assertEqUnordered
 from mockthink.test.functional.common import MockTest
 
+
 def common_join_data():
     people_data = [
         {'id': 'joe-id', 'name': 'Joe'},
@@ -31,6 +32,7 @@ def common_join_data():
 
     }
     return data
+
 
 class TestEqJoin(MockTest):
     @staticmethod
@@ -101,6 +103,7 @@ class TestInnerJoin(MockTest):
             lambda employee, person: employee['person'] == person['id']
         ).run(conn)
         assertEqUnordered(expected, list(result))
+
 
 class TestOuterJoin(MockTest):
     @staticmethod

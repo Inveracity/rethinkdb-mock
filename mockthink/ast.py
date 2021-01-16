@@ -1,20 +1,27 @@
-from rethinkdb.errors import RqlRuntimeError, RqlDriverError, RqlCompileError
+import json
 import operator
+from pprint import pprint
 import random
 import uuid
-import json
+
 import dateutil.parser
-from pprint import pprint
-from future.utils import iteritems, text_type
+from future.utils import iteritems
+from future.utils import text_type
 from past.utils import old_div
 
-from . import util, joins, rtime
-from .scope import Scope
-
-from . import ast_base
-from .ast_base import RBase, MonExp, BinExp, Ternary, ByFuncBase
-from .ast_base import LITERAL_OBJECT, LITERAL_LIST, RDatum, RFunc, MakeObj, MakeArray
-
+from mockthink import ast_base
+from mockthink import joins
+from mockthink import rtime
+from mockthink import util
+from mockthink.ast_base import BinExp
+from mockthink.ast_base import ByFuncBase
+from mockthink.ast_base import LITERAL_OBJECT
+from mockthink.ast_base import MakeArray
+from mockthink.ast_base import MonExp
+from mockthink.ast_base import RBase
+from mockthink.ast_base import RFunc
+from mockthink.ast_base import Ternary
+from mockthink.scope import Scope
 
 # #################
 #   Query handlers
@@ -66,7 +73,7 @@ class TypeOf(MonExp):
             float: 'NUMBER',
             bool: 'BOOL'
         }
-        if val == None:
+        if val is None:
             return 'NULL'
         else:
             val_type = type(val)
@@ -157,7 +164,8 @@ class GetAll(BinExp):
                 arg
             )
             if isinstance(index_func, RFunc):
-                def map_fn(d): return index_func.run([d], scope)
+                def map_fn(d):
+                    return index_func.run([d], scope)
             else:
                 map_fn = index_func
 
@@ -627,7 +635,7 @@ class Branch(RBase):
 
     def run(self, arg, scope):
         test = self.test.run(arg, scope)
-        if test == False or test == None:
+        if test is False or test is None:
             return self.if_false.run(arg, scope)
         else:
             return self.if_true.run(arg, scope)
@@ -740,7 +748,6 @@ class IndexCreateByFunc(RBase):
         self.optargs = optargs or {}
 
     def run(self, arg, scope):
-        sequence = self.left.run(arg, scope)
         index_name = self.middle.run(arg, scope)
         index_func = self.right
         current_db = self.find_db_scope()
@@ -941,7 +948,10 @@ class InnerOuterJoinBase(RBase):
     def run(self, arg, scope):
         left_seq = self.left.run(arg, scope)
         right_seq = self.middle.run(arg, scope)
-        def pred(x, y): return self.right.run([x, y], scope)
+
+        def pred(x, y):
+            return self.right.run([x, y], scope)
+
         return self.do_run(left_seq, right_seq, pred, arg, scope)
 
 
@@ -1006,7 +1016,7 @@ class DayOfWeek(MonExp):
 
 class Now(RBase):
     def __init__(self, optsargs={}):
-        self.optargs = optargs
+        self.optargs = optsargs
 
     def run(self, db, scope):
         return db.get_now_time()

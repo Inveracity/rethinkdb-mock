@@ -1,4 +1,5 @@
-from future.utils import PY2, iteritems
+from future.utils import iteritems
+from future.utils import PY2
 
 from mockthink.test.common import assertEqual
 
@@ -6,19 +7,24 @@ if PY2:
     import mock
 else:
     from unittest import mock
-import unittest
+
 from pprint import pprint
+import unittest
+
 from ... import util
+
 
 class TestUtil(unittest.TestCase):
     def test_curry2(self):
-        fun = lambda x, y: x + y
+        def fun(x, y):
+            return x + y
         curried = util.curry2(fun)
         assertEqual(8, curried(5, 3))
         assertEqual(8, curried(5)(3))
 
     def test_curry3(self):
-        fun = lambda x, y, z: x + y + z
+        def fun(x, y, z):
+            return x + y + z
         curried = util.curry3(fun)
         assertEqual(15, curried(3, 5, 7))
         assertEqual(15, curried(3, 5)(7))
@@ -54,7 +60,6 @@ class TestUtil(unittest.TestCase):
         assertEqual([1, 2, 3], list_1)
         assertEqual([7, 8, 9], list_2)
 
-
     def test_extend_with(self):
         with mock.patch('mockthink.util.extend') as extend:
             extend.return_value = 'EXTENDED'
@@ -67,9 +72,10 @@ class TestUtil(unittest.TestCase):
             ])
 
     def test_map_with(self):
-        add_1 = lambda x: x + 1
+        def add_1(x):
+            return x + 1
         nums = [10, 20, 30]
-        map_fn = util.map_with(add_1)
+        # map_fn = util.map_with(add_1)
         assertEqual([11, 21, 31], util.map_with(add_1)(nums))
         assertEqual([11, 21, 31], util.map_with(add_1, nums))
 
@@ -127,8 +133,11 @@ class TestUtil(unittest.TestCase):
         }, util.pluck_with('x', 'y')(obj))
 
     def test_pipeline(self):
-        add_5 = lambda x: x + 5
-        mul_2 = lambda x: x * 2
+        def add_5(x):
+            return x + 5
+
+        def mul_2(x):
+            return x * 2
 
         assertEqual(24, util.pipeline(add_5, mul_2)(7))
         assertEqual(19, util.pipeline(mul_2, add_5)(7))
@@ -156,7 +165,6 @@ class TestUtil(unittest.TestCase):
             'z': 'good-z'
         }
         self.assertFalse(util.match_attrs(to_match, bad_test))
-
 
     def test_match_attrs_missing_val(self):
         to_match = {
@@ -189,7 +197,8 @@ class TestUtil(unittest.TestCase):
         assertEqual(None, util.getter('y')(thing))
 
     def test_maybe_map_simple(self):
-        add_5 = lambda x: x + 5
+        def add_5(x):
+            return x + 5
         assertEqual(13, util.maybe_map(add_5, 8))
         assertEqual([5, 10, 15], util.maybe_map(add_5, [0, 5, 10]))
 
@@ -299,7 +308,9 @@ class TestUtil(unittest.TestCase):
             {'val': 28},
             {'val': 8}
         ]
-        get_val = lambda doc: doc['val']
+
+        def get_val(doc):
+            return doc['val']
         assertEqual({'val': 2}, util.min_mapped(get_val, sequence))
 
     def test_max_mapped(self):
@@ -311,7 +322,9 @@ class TestUtil(unittest.TestCase):
             {'val': 28},
             {'val': 8}
         ]
-        get_val = lambda doc: doc['val']
+
+        def get_val(doc):
+            return doc['val']
         assertEqual({'val': 28}, util.max_mapped(get_val, sequence))
 
     def test_deep_extend_pair(self):
@@ -365,7 +378,8 @@ class TestDictableSet(unittest.TestCase):
         self.assertFalse(foo.has(y))
 
     def test_reordered_vals(self):
-        get_doc = lambda: {'x': [5, 10]}
+        def get_doc():
+            return {'x': [5, 10]}
         foo = util.DictableSet([get_doc()])
         self.assertTrue(foo.has(get_doc()))
         self.assertTrue(foo.has({'x': [10, 5]}))

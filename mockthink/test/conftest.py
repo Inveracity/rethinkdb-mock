@@ -1,18 +1,25 @@
+import logging
+
 import pytest
+from pytest_server_fixtures.rethink import rethink_server_sess
 import rethinkdb
-from pytest_server_fixtures.rethink import rethink_server, rethink_server_sess
 
 from mockthink import MockThink
-from mockthink.test.common import as_db_and_table, load_stock_data
+from mockthink.test.common import as_db_and_table
+from mockthink.test.common import load_stock_data
 
-import logging
 logging.basicConfig()
+
 
 def pytest_addoption(parser):
     group = parser.getgroup("mockthink", "Mockthink Testing")
-    group._addoption("--run", dest="conn_type", default="mockthink", action="store",
-                     choices=["mockthink", "rethink"],
-                     help="Select whether tests are run on a mockthink connection or rethink connection or both")
+    group._addoption(
+        "--run",
+        dest="conn_type",
+        default="mockthink",
+        action="store",
+        choices=["mockthink", "rethink"],
+        help="Select whether tests are run on a mockthink connection or rethink connection or both")
 
 
 @pytest.fixture(scope="session")

@@ -1,6 +1,10 @@
 from rethinkdb import r
-from mockthink.test.common import as_db_and_table, assertEqUnordered, assertEqual
+
+from mockthink.test.common import as_db_and_table
+from mockthink.test.common import assertEqual
+from mockthink.test.common import assertEqUnordered
 from mockthink.test.functional.common import MockTest
+
 
 class TestStrings(MockTest):
     @staticmethod
@@ -18,7 +22,7 @@ class TestStrings(MockTest):
             'SOME,CSV,FILE',
             'SOMEETHING'
         ])
-        result =  r.db('library').table('texts').map(
+        result = r.db('library').table('texts').map(
             lambda doc: doc['text'].upcase()
         ).run(conn)
         assertEqual(expected, set(list(result)))
@@ -29,7 +33,7 @@ class TestStrings(MockTest):
             'some,csv,file',
             'someething'
         ])
-        result =  r.db('library').table('texts').map(
+        result = r.db('library').table('texts').map(
             lambda doc: doc['text'].downcase()
         ).run(conn)
         assertEqual(expected, set(list(result)))

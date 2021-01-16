@@ -1,9 +1,8 @@
 from rethinkdb import r
-from rethinkdb.errors import RqlRuntimeError
 
-from mockthink import util
-from mockthink.test.common import as_db_and_table, assertEqual
+from mockthink.test.common import assertEqual
 from mockthink.test.functional.common import MockTest
+
 
 class TestTableMod(MockTest):
     @staticmethod

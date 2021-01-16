@@ -1,7 +1,9 @@
 from rethinkdb import r
-from mockthink.test.common import as_db_and_table, assertEqual, assertEqUnordered
+
+from mockthink.test.common import as_db_and_table
+from mockthink.test.common import assertEqual
+from mockthink.test.common import assertEqUnordered
 from mockthink.test.functional.common import MockTest
-from pprint import pprint
 
 
 class TestGroup(MockTest):
@@ -84,7 +86,9 @@ class TestUngroup(MockTest):
         result = list(result)
         assertEqual(3, len(result))
         assertEqual(set(['bro', 'hipster', 'unknown']), set([doc['group'] for doc in result]))
-        is_group = lambda group: lambda doc: doc['group'] == group
+
+        def is_group(group):
+            return lambda doc: doc['group'] == group
         for group in ('bro', 'hipster', 'unknown'):
             result_group = list(filter(is_group(group), result))[0]
             expected_group = list(filter(is_group(group), expected))[0]
@@ -117,7 +121,9 @@ class TestUngroup(MockTest):
         result = list(result)
         assertEqual(3, len(result))
         assertEqual(set(['bro', 'hipster', 'unknown']), set([doc['group'] for doc in result]))
-        is_group = lambda group: lambda doc: doc['group'] == group
+
+        def is_group(group):
+            return lambda doc: doc['group'] == group
         for group in ('bro', 'hipster', 'unknown'):
             result_group = list(filter(is_group(group), result))[0]
             expected_group = list(filter(is_group(group), expected))[0]

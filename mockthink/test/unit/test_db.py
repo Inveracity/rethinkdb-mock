@@ -1,5 +1,6 @@
-from ..common import TestCase, assertEqual
-from ... import db
+from mockthink import db
+from mockthink.test.common import assertEqual
+from mockthink.test.common import TestCase
 
 
 def db_insert_starting_data():
@@ -112,4 +113,3 @@ class TestDbInsertWithConflictSettings(TestCase):
         assertEqual(expected_result, result)
         keys = ('replaced', 'inserted', 'errors', 'changes')
         self.assert_key_equality(keys, expected_report, report)
-

@@ -1,8 +1,13 @@
+from pprint import pprint
+
 from rethinkdb import r
-from mockthink.test.common import as_db_and_table, assertEqUnordered, assertEqual
+
+from mockthink.test.common import as_db_and_table
+from mockthink.test.common import assertEqual
+from mockthink.test.common import assertEqUnordered
 from mockthink.test.functional.common import MockTest
 from mockthink.util import DictableSet
-from pprint import pprint
+
 
 class TestDistinctTop(MockTest):
     @staticmethod

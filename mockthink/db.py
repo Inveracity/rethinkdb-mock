@@ -1,10 +1,11 @@
 import contextlib
 from pprint import pprint
 
-import rethinkdb
 from future.utils import iteritems
+import rethinkdb
 
-from . import rtime, util
+from . import rtime
+from . import util
 from .rql_rewrite import rewrite_query
 from .scope import Scope
 

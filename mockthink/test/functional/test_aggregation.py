@@ -1,8 +1,7 @@
 from rethinkdb import r
-from rethinkdb.errors import RqlRuntimeError
 
-from mockthink import util
-from mockthink.test.common import as_db_and_table, assertEqual
+from mockthink.test.common import as_db_and_table
+from mockthink.test.common import assertEqual
 from mockthink.test.functional.common import MockTest
 
 
@@ -107,7 +106,7 @@ class TestMin(MockTest):
         return as_db_and_table('x', 'people', data)
 
     def test_min_of_table_field(self, conn):
-        expected = {'id': 'joe', 'age': 26, 'hobbies': ['sand',  'water',  'cats']}
+        expected = {'id': 'joe', 'age': 26, 'hobbies': ['sand', 'water', 'cats']}
         result = r.db('x').table('people').min('age').run(conn)
         assertEqual(expected, result)
 
@@ -121,7 +120,7 @@ class TestMin(MockTest):
         assertEqual(expected, list(result))
 
     def test_min_of_table_func(self, conn):
-        expected = {'id': 'joe', 'age': 26, 'hobbies': ['sand',  'water',  'cats']}
+        expected = {'id': 'joe', 'age': 26, 'hobbies': ['sand', 'water', 'cats']}
         result = r.db('x').table('people').min(
             lambda doc: doc['age']
         ).run(conn)

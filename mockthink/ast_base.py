@@ -1,7 +1,8 @@
 from future.utils import iteritems
-from rethinkdb.errors import RqlCompileError, RqlRuntimeError
+from rethinkdb.errors import RqlCompileError
+from rethinkdb.errors import RqlRuntimeError
 
-from . import util
+from mockthink import util
 
 
 class AttrHaving(object):
@@ -40,8 +41,6 @@ class RBase(object):
         return result
 
     def find_index_func_for_scope(self, index_name, db_arg):
-        table = self.find_table_scope()
-        db = self.find_db_scope()
         db_scope = self.find_db_scope()
         table_scope = self.find_table_scope()
         func = db_arg.get_index_func_in_table_in_db(
@@ -56,6 +55,7 @@ class RBase(object):
 
     def raise_rql_runtime_error(self, msg):
         from rethinkdb.errors import RqlRuntimeError
+
         # temporary jankiness to get it working
         # doing it this way means error messages won't
         # be properly printed
@@ -182,7 +182,10 @@ class ByFuncBase(RBase):
         self.set_mock_ref(self.left)
         self.set_mock_ref(self.right)
         left = self.left.run(arg, scope)
-        def map_fn(x): return self.right.run(x, scope)
+
+        def map_fn(x):
+            return self.right.run(x, scope)
+
         return self.do_run(left, map_fn, arg, scope)
 
 

@@ -1,6 +1,3 @@
-
-
-
 class MockTest(object):
     @staticmethod
     def get_data():

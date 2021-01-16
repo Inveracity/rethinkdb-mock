@@ -1,6 +1,8 @@
 from rethinkdb import r
+
+from mockthink.test.common import as_db_and_table
+from mockthink.test.common import assertEqual
 from mockthink.test.functional.common import MockTest
-from mockthink.test.common import as_db_and_table, assertEqual
 
 
 class TestOrderByOne(MockTest):
@@ -21,7 +23,6 @@ class TestOrderByOne(MockTest):
         ]
         result = r.db('y').table('scores').order_by('age').run(conn)
         assertEqual(expected, list(result))
-
 
     def test_sort_1_attr_asc(self, conn):
         expected = [
@@ -76,6 +77,7 @@ class TestOrderByOne(MockTest):
         ]
         result = r.db('y').table('scores').order_by(index='score').run(conn)
         assertEqual(expected, list(result))
+
 
 class TestOrderByMulti(MockTest):
     @staticmethod

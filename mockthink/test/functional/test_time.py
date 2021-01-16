@@ -1,13 +1,16 @@
 import datetime
+
 from rethinkdb import r
-from pprint import pprint
-
-from rethinkdb.errors import ReqlDriverCompileError, RqlCompileError, RqlDriverError
 from rethinkdb.ast import RqlTzinfo
+from rethinkdb.errors import ReqlDriverCompileError
+from rethinkdb.errors import RqlCompileError
 
-from mockthink.test.common import as_db_and_table, assertEqual, assertEqUnordered
-from mockthink.test.functional.common import MockTest
 from mockthink import rtime
+from mockthink.test.common import as_db_and_table
+from mockthink.test.common import assertEqual
+from mockthink.test.common import assertEqUnordered
+from mockthink.test.functional.common import MockTest
+
 
 class TestDateTimeGetters(MockTest):
     @staticmethod
@@ -90,6 +93,7 @@ class TestDateTimeGetters(MockTest):
         ).run(conn)
         assertEqual(expected, set(list(result)))
 
+
 class TestMoreTime(MockTest):
     @staticmethod
     def get_data():
@@ -130,37 +134,6 @@ class TestTime(MockTest):
         assertEqual(10, update_time.day)
         assert(isinstance(update_time.tzinfo, RqlTzinfo))
 
-    # def test_time_year_month_day_hour_tz(self, conn):
-    #     r.db('unimportant').table('very').update({
-    #         'updated': r.time(2014, 6, 10, 15, 'Z')
-    #     }).run(conn)
-
-    #     result = r.db('unimportant').table('very').get('say_anything').run(conn)
-    #     pprint(result)
-    #     update_time = result['updated']
-    #     assertEqual(2014, update_time.year)
-    #     assertEqual(6, update_time.month)
-    #     assertEqual(10, update_time.day)
-    #     assertEqual(15, update_time.hour)
-    #     assert(isinstance(update_time.tzinfo, RqlTzinfo))
-
-    # def test_time_year_month_day_hour_minute_tz(self, conn):
-    #     r.db('unimportant').table('very').update(
-    #         lambda doc: doc.merge({'updated': r.time(2014, 6, 10, 15, 12, 'Z')})
-    #     ).run(conn)
-    #     print 'SLEEPING'
-    #     time.sleep(5)
-    #     print 'WAKING'
-    #     result = r.db('unimportant').table('very').get('say_anything').run(conn)
-    #     pprint(result)
-    #     update_time = result['updated']
-    #     assertEqual(2014, update_time.year)
-    #     assertEqual(6, update_time.month)
-    #     assertEqual(10, update_time.day)
-    #     assertEqual(15, update_time.hour)
-    #     assertEqual(30, update_time.minute)
-    #     assert(isinstance(update_time.tzinfo, RqlTzinfo))
-
     def test_time_year_month_day_hour_minute_second_tz(self, conn):
         r.db('unimportant').table('very').update({
             'updated': r.time(2014, 6, 10, 15, 30, 45, 'Z')
@@ -178,7 +151,7 @@ class TestTime(MockTest):
 
     def test_error_with_less_than_4_args(self, conn):
         try:
-            query = r.db('unimportant').table('very').update({
+            r.db('unimportant').table('very').update({
                 'update_time': r.time(2014, 3, 24)
             }).run(conn)
         except RqlCompileError as e:
@@ -188,7 +161,7 @@ class TestTime(MockTest):
     def test_error_with_no_timezone(self, conn):
         date = datetime.datetime(2014, 3, 24, 12)
         try:
-            query = r.db('unimportant').table('very').update({
+            r.db('unimportant').table('very').update({
                 'update_time': date
             }).run(conn)
         except ReqlDriverCompileError as e:
@@ -302,6 +275,7 @@ class TestDuring(MockTest):
         ).run(conn)
         assertEqUnordered(expected, list(result))
 
+
 class TestDuring2(MockTest):
     @staticmethod
     def get_data():
@@ -323,4 +297,3 @@ class TestDuring2(MockTest):
         ).run(conn)
         result = list(result)
         assertEqual(2, len(result))
-

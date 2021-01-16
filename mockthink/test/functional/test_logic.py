@@ -1,7 +1,10 @@
 from rethinkdb import r
-from mockthink.test.common import as_db_and_table, assertEqUnordered, assertEqual
+
+from mockthink.test.common import as_db_and_table
+from mockthink.test.common import assertEqual
+from mockthink.test.common import assertEqUnordered
 from mockthink.test.functional.common import MockTest
-from pprint import pprint
+
 
 class TestLogic1(MockTest):
     @staticmethod
@@ -83,4 +86,3 @@ class TestLogic1(MockTest):
             lambda doc: doc['hair_color'] != 'blonde'
         ).pluck('id').run(conn)
         assertEqUnordered(expected, list(result))
-

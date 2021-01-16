@@ -1,4 +1,4 @@
-
+from pprint import pprint
 
 
 class NotInScopeErr(Exception):
@@ -17,7 +17,7 @@ class Scope(object):
             result = self.values[x]
         elif hasattr(self, 'parent'):
             result = self.parent.get_sym(x)
-        if result == None:
+        if result is None:
             msg = f"symbol not defined: {x}"
             raise NotInScopeErr(msg)
         return result
@@ -28,7 +28,7 @@ class Scope(object):
         return scope
 
     def get_flattened(self):
-        vals = {k: v for k, v in iteritems(self.values)}
+        vals = {k: v for k, v in list(self.values.items())}
         if not hasattr(self, 'parent'):
             return vals
         parent_vals = self.parent.get_flattened()

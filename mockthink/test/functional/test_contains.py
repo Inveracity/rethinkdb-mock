@@ -1,8 +1,9 @@
 from rethinkdb import r
-from mockthink.test.common import as_db_and_table, assertEqual
+
+from mockthink.test.common import as_db_and_table
+from mockthink.test.common import assertEqual
 from mockthink.test.functional.common import MockTest
-from mockthink.util import DictableSet
-from pprint import pprint
+
 
 class TestContains(MockTest):
     @staticmethod
@@ -79,4 +80,3 @@ class TestContains(MockTest):
             lambda doc: doc['id'] == 'tara-muse-id'
         ).run(conn)
         assertEqual(False, result)
-

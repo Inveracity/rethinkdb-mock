@@ -1,6 +1,7 @@
 from collections import defaultdict
 
-from future.utils import iteritems, old_div
+from future.utils import iteritems
+from future.utils import old_div
 
 
 def curry2(func):

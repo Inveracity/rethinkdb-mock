@@ -1,6 +1,6 @@
-import rethinkdb
 import datetime
-import time
+
+import rethinkdb
 
 
 def to_date(dt, timezone=None):

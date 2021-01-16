@@ -1,7 +1,9 @@
 from rethinkdb import r
-from mockthink.test.common import as_db_and_table, assertEqual
+
+from mockthink.test.common import as_db_and_table
+from mockthink.test.common import assertEqual
 from mockthink.test.functional.common import MockTest
-from pprint import pprint
+
 
 class TestTypeOf(MockTest):
     @staticmethod
@@ -25,7 +27,6 @@ class TestTypeOf(MockTest):
             lambda doc: doc['null_attr'].type_of()
         ).run(conn)
         assertEqual(expected, list(result))
-
 
     def test_num(self, conn):
         expected = ['NUMBER']
@@ -61,4 +62,3 @@ class TestTypeOf(MockTest):
             lambda doc: doc['str_attr'].type_of()
         ).run(conn)
         assertEqual(expected, list(result))
-

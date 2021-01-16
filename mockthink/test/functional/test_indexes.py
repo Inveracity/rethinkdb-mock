@@ -1,7 +1,12 @@
-from rethinkdb import r
-from mockthink.test.common import as_db_and_table, assertEqUnordered, assertEqual
-from mockthink.test.functional.common import MockTest
 from pprint import pprint
+
+from rethinkdb import r
+
+from mockthink.test.common import as_db_and_table
+from mockthink.test.common import assertEqual
+from mockthink.test.common import assertEqUnordered
+from mockthink.test.functional.common import MockTest
+
 
 class TestIndexes(MockTest):
     @staticmethod
@@ -69,7 +74,6 @@ class TestIndexes(MockTest):
         ).run(conn)
         indexes = list(r.db('s').table('people').index_list().run(conn))
         assertEqual([], indexes)
-
 
     def test_index_rename_works(self, conn):
         r.db('s').table('people').index_create(
@@ -153,9 +157,9 @@ class TestIndexUpdating(MockTest):
             'last_name': 'One'
         }).run(conn)
         result = list(people
-            .get_all('One', index='last_name')
-            .run(conn)
-        )
+                      .get_all('One', index='last_name')
+                      .run(conn)
+                      )
         assertEqual(1, len(result))
         result = result[0]
         assertEqual('someone', result['id'])
