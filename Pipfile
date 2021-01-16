@@ -1,0 +1,25 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[dev-packages]
+flake8 = "*"
+flake8-isort = "*"
+future = "*"
+isort = "*"
+pytest = "*"
+pytest-cov = "*"
+pytest-server-fixtures = "*"
+python-dateutil = "*"
+
+[packages]
+rethinkdb = ">=2.4.8"
+
+[requires]
+python_version = "3.9"
+
+[scripts]
+test = "pytest --cov mockthink -vv"
+isort = "isort ."
+lint = "flake8 ."

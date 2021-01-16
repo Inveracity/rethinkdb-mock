@@ -2,10 +2,9 @@
 
 # MockThink
 
-MockThink is an in-process Python clone of RethinkDB's API.  For testing.
+MockThink is an in-process Python clone of RethinkDB's API. For testing.
 
-
-MockThink provides a stub connection object which can be passed to normal ReQL queries.  Instead of being serialized and sent to the server, the ReQL AST is run through an interpreter in the same process.  "Tables" and "databases" are based on data given to the MockThink constructor.
+MockThink provides a stub connection object which can be passed to normal ReQL queries. Instead of being serialized and sent to the server, the ReQL AST is run through an interpreter in the same process. "Tables" and "databases" are based on data given to the MockThink constructor.
 
 Avoiding network calls (for tests themselves as well as setup/teardown) makes testing queries with MockThink orders of magnitude faster.
 
@@ -106,33 +105,45 @@ Avoiding network calls (for tests themselves as well as setup/teardown) makes te
 
 ## Testing
 
-The most confusing test failures are those caused by errors in test frameworks and harnesses themselves.  This means they need to be tested very thoroughly.
+The most confusing test failures are those caused by errors in test frameworks and harnesses themselves.
+This means they need to be tested very thoroughly.
 
-The main testing is a [suite of functional tests](https://github.com/scivey/mockthink/tree/master/mockthink/test/functional) which are targeted at the individual query level, e.g. [testing all the ways in which `r.merge` might be called](https://github.com/scivey/mockthink/blob/master/mockthink/test/functional/test_merge.py).  These are all complete ReQL queries, but avoid complexity beyond the target query to make failures easier to diagnose.
+The main testing is a [suite of functional tests](https://github.com/scivey/mockthink/tree/master/mockthink/test/functional) which are targeted at the individual query level,
+e.g. [testing all the ways in which `r.merge` might be called](https://github.com/scivey/mockthink/blob/master/mockthink/test/functional/test_merge.py).
+
+These are all complete ReQL queries, but avoid complexity beyond the target query to make failures easier to diagnose.
 
 The [integration tests](https://github.com/scivey/mockthink/blob/master/mockthink/test/integration/__init__.py) cover more complicated queries, e.g. `eq_join`->`map`->`eq_join`->`map`.
 
-Both the functional and integration tests have two modes of execution, `mockthink` and `rethink`.  The second mode runs the same tests against a running RethinkDB instance, and is much slower due to the network calls.  `mockthink` mode is for testing MockThink's behavior against our expectations; `rethink` mode is for testing our expectations against reality.
+Both the functional and integration tests have two modes of execution, `mockthink` and `rethink`. The second mode runs the same tests against a running RethinkDB instance, and is much slower due to the network calls. `mockthink` mode is for testing MockThink's behavior against our expectations; `rethink` mode is for testing our expectations against reality.
+
+### Run tests
+
+```bash
+# Install dependencies
+pip install pipenv
+pipenv sync --dev
+
+# Run the unit tests
+pipenv run test
+```
+
+## Code formatting
+
+The `tox.ini` file contains the configuration for code formatting
+
+```bash
+# Install dependencies
+pip install pipenv
+pipenv sync --dev
+
+# Format imports
+pipenv run isort
+
+# Check styling with Flake8
+pipenv run lint
+```
 
 ## License
 
-The MIT License (MIT)
-
-Copyright (c) 2014 Scott Ivey
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of
-this software and associated documentation files (the "Software"), to deal in
-the Software without restriction, including without limitation the rights to
-use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
-the Software, and to permit persons to whom the Software is furnished to do so,
-subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
-FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
-COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+[The MIT License (MIT)](LICENSE)
