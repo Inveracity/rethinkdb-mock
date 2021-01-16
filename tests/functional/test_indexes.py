@@ -155,10 +155,11 @@ class TestIndexUpdating(MockTest):
             'first_name': 'Some',
             'last_name': 'One'
         }).run(conn)
-        result = list(people
-                      .get_all('One', index='last_name')
-                      .run(conn)
-                      )
+        result = list(
+            people
+            .get_all('One', index='last_name')
+            .run(conn)
+        )
         assertEqual(1, len(result))
         result = result[0]
         assertEqual('someone', result['id'])
@@ -182,21 +183,3 @@ class TestMoreIndices(MockTest):
         spaces.index_wait().run(conn)
         children = list(spaces.get_all('a-id', index='parents').run(conn))
         assertEqual(4, len(children))
-
-    # def test_query_against(self, conn):
-    #     spaces = r.db('s').table('spaces')
-    #     spaces.index_create('parents', multi=True).run(conn)
-    #     spaces.index_wait().run(conn)
-    #     query = spaces.get_all('b-id', index='parents')\
-    #         .distinct()\
-    #         .order_by(lambda doc: doc['parents'].count())\
-    #         .map(lambda doc: doc['id'])
-    #     result = list(query.run(conn))
-    #     pprint(result)
-    #     assertEqual(True, False)
-    #         # for parent_id in (rethinkdb.table(Workspace.plural())
-    #         #                            .get_all(*workspace_ids, index='parents')
-    #         #                            .distinct()
-    #         #                            .order_by(lambda doc: doc['parents'].count())
-    #         #                            .map(lambda doc: doc['id'])
-    #         #                            .run(Model.connection.local())):

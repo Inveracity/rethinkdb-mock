@@ -748,32 +748,6 @@ class TestLiteral(MockTest):
         result = r.db('things').table('points').get('one').run(conn)
         assertEqual(expected, result)
 
-    # def test_top_level_literal_on_update_does_nothing(self, conn):
-    #     expected = {
-    #         'id': 'one',
-    #         'points': {
-    #             'pt1': {
-    #                 'x': 'x-1',
-    #                 'y': 'y-1'
-    #             }
-    #         }
-    #     }
-    #     r.db('things').table('points').filter({'id': 'one'}).update(
-    #         r.literal({'points': {'pt1': {'z': 'z-1'}}})
-    #     ).run(conn)
-    #     result = r.db('things').table('points').get('one').run(conn)
-    #     assertEqual(expected, result)
-
-    # def test_nested_literal_throws_update(self, conn):
-    #     err = None
-    #     try:
-    #         r.db('things').table('points').filter({'id': 'one'}).update(
-    #             {'points': r.literal({'pt1': r.literal({'z': 'z-1'})})}
-    #         ).run(conn)
-    #     except RqlRuntimeError as e:
-    #         err = e
-    #     assert(isinstance(err, RqlRuntimeError))
-
 
 class TestDelete(MockTest):
     @staticmethod

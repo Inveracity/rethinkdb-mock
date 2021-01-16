@@ -239,16 +239,18 @@ class TestDo(MockTest):
         assertEqual('One', result)
 
     def test_do_simple_2(self, conn):
-        result = r.do(r.db('generic').table('table').get('two'),
-                      lambda d: d['name']
-                      ).run(conn)
+        result = r.do(
+            r.db('generic').table('table').get('two'),
+            lambda d: d['name']
+        ).run(conn)
         assertEqual('Two', result)
 
     def test_do_two(self, conn):
         base = r.db('generic').table('table')
-        result = r.do(base.get('one'), base.get('two'),
-                      lambda d1, d2: [d1['name'], d2['name']]
-                      ).run(conn)
+        result = r.do(
+            base.get('one'), base.get('two'),
+            lambda d1, d2: [d1['name'], d2['name']]
+        ).run(conn)
         assertEqual(['One', 'Two'], result)
 
     def test_do_three(self, conn):
