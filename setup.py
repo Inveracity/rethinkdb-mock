@@ -1,8 +1,6 @@
 from setuptools import setup
 
-version_path = 'mockthink/version.py'
-
-exec(open(version_path).read())
+from mockthink.version import VERSION
 
 setup(
     name="mockthink",
