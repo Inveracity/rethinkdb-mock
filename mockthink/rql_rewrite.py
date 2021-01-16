@@ -403,6 +403,8 @@ def handle_order_by(node):
             accepted = (r_ast.Desc, r_ast.Asc, r_ast.Func)
             assert(elem.__class__ in accepted)
             right.append(type_dispatch(elem))
+    if optargs.get("index"):
+        right.append(mt_ast.Asc(type_dispatch(r_ast.Datum(optargs["index"]))))
     if isinstance(right[0], mt_ast.RFunc):
         right = right[0]
         return mt_ast.OrderByFunc(left, right, optargs=optargs)
