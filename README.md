@@ -1,4 +1,5 @@
-![build](https://github.com/Inveracity/mockthink/workflows/build/badge.svg?branch=master)
+![build](https://github.com/Inveracity/mockthink/workflows/build/badge.svg?branch=master) ![badge](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/Inveracity/bade1568c33344c896cbfa5cdef91270/raw/af7a4b06a75e5d84c7fe1ce077400bebe628bb02/coverage.json)
+
 
 # MockThink
 

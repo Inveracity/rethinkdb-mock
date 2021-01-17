@@ -31,7 +31,8 @@ jobs:
     - name: Test with pytest
       run: |
         pipenv run test
-        COVERAGE=$(pipenv run coverage report | grep TOTAL | tr -s " " | cut -d " " -f 4) >> $GITHUB_ENV
+        COVERAGE=$(pipenv run coverage report | grep TOTAL | tr -s " " | cut -d " " -f 4)
+        echo "COVERAGE=$COVERAGE" >> $GITHUB_ENV
 
     - name: Coverage badge
       uses: schneegans/dynamic-badges-action@v1.0.0
