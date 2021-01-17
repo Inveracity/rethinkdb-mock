@@ -31,3 +31,14 @@ jobs:
     - name: Test with pytest
       run: |
         pipenv run test
+        COVERAGE=$(pipenv run coverage report | grep TOTAL | tr -s " " | cut -d " " -f 4) >> $GITHUB_ENV
+
+    - name: Coverage badge
+      uses: schneegans/dynamic-badges-action@v1.0.0
+      with:
+        auth: ${{ secrets.GIST_SECRET }}
+        gistID: bade1568c33344c896cbfa5cdef91270
+        filename: coverage.json
+        label: coverage
+        message: ${{ env.COVERAGE }}
+        color: green
