@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.com/Inveracity/mockthink.svg?branch=master)](https://travis-ci.com/Inveracity/mockthink)
+![build](https://github.com/Inveracity/mockthink/workflows/build/badge.svg?branch=master)
 
 # MockThink
 
