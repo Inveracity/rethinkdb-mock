@@ -6,6 +6,8 @@ tmp
 *.tmp
 .tox/
 .idea/
+dist
+*.egg-info
 .coverage
 .vscode/
 htmlcov/
