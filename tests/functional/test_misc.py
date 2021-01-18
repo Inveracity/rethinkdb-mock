@@ -95,7 +95,7 @@ class TestFiltering(MockTest):
         bill = r.row["id"] == "bill-id"
         kimye = r.row["name"] == "kimye"
 
-        result = r.db('x').table('people').filter(not_joe & not_bob & (kimye | bill)).run(conn) # not joe and not bob and either kimye or bill
+        result = r.db('x').table('people').filter(not_joe & not_bob & (kimye | bill)).run(conn)  # not joe and not bob and either kimye or bill
 
         assertEqual(expected, list(result))
 

@@ -309,7 +309,6 @@ class TestTimeComparison(MockTest):
         ]
         return as_db_and_table('d', 'people', data)
 
-
     def test_filter_older_than_now(self, conn):
         table = r.db('d').table('people')
 
