@@ -30,3 +30,7 @@ class TestRTime(unittest.TestCase):
         assertEqual(3, dt.month)
         assertEqual(2, dt.day)
         self.assertTrue(isinstance(dt.tzinfo, rethinkdb.ast.RqlTzinfo))
+
+    def test_now(self):
+        dt = rtime.now()
+        self.assertTrue(isinstance(dt.tzinfo, rethinkdb.ast.RqlTzinfo))
