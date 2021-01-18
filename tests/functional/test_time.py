@@ -297,3 +297,31 @@ class TestDuring2(MockTest):
         ).run(conn)
         result = list(result)
         assertEqual(2, len(result))
+
+
+class TestTimeComparison(MockTest):
+    @staticmethod
+    def get_data():
+        data = [
+            {'id': 'joe', 'last_updated': rtime.make_time(2019, 6, 2)},
+            {'id': 'sam', 'last_updated': rtime.make_time(2020, 6, 3)},
+            {'id': 'mia', 'last_updated': rtime.make_time(2030, 6, 3)}
+        ]
+        return as_db_and_table('d', 'people', data)
+
+
+    def test_filter_older_than_now(self, conn):
+        table = r.db('d').table('people')
+
+        old = r.row["last_updated"] <= r.now()
+        result = table.filter(old).run(conn)
+        result = list(result)
+        assertEqual(2, len(result))
+
+    def test_filter_newer_than_now(self, conn):
+        table = r.db('d').table('people')
+
+        new = r.row["last_updated"] >= r.now()
+        result = table.filter(new).run(conn)
+        result = list(result)
+        assertEqual(1, len(result))
