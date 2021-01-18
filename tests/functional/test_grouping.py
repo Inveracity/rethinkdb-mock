@@ -45,6 +45,14 @@ class TestGroup(MockTest):
         assertEqUnordered(expected['hipster'], result['hipster'])
         assertEqual(set(['bro', 'hipster']), set(result.keys()))
 
+    def test_group_count(self, conn):
+        expected = {
+            'bro': 1,
+            'hipster': 2
+        }
+        result = r.db('x').table('people').group('type').count().run(conn)
+        assertEqual(expected, result)
+
 
 class TestUngroup(MockTest):
     @staticmethod
