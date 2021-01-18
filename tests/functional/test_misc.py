@@ -81,6 +81,24 @@ class TestFiltering(MockTest):
         result = r.db('x').table('people').filter({'age': 35}).run(conn)
         assertEqual(expected, list(result))
 
+    def test_filter_dict_match_bitwise(self, conn):
+        """
+        Test bitwise operators and other bitwise operators
+        """
+        expected = [
+            {'id': 'bill-id', 'name': 'bill', 'age': 35},
+            {'id': 'kimye-id', 'name': 'kimye', 'age': 17}
+        ]
+
+        not_joe = r.row["id"] != "joe-id"
+        not_bob = r.row["id"] != "bob-id"
+        bill = r.row["id"] == "bill-id"
+        kimye = r.row["name"] == "kimye"
+
+        result = r.db('x').table('people').filter(not_joe & not_bob & (kimye | bill)).run(conn) # not joe and not bob and either kimye or bill
+
+        assertEqual(expected, list(result))
+
 
 class TestMapping(MockTest):
     @staticmethod
