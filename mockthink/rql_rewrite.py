@@ -462,7 +462,14 @@ def is_instance_of_any(type_tuple, to_test):
 def handle_count(node):
     optargs = process_optargs(node)
     left = type_dispatch(node._args[0])
-    if len(node._args) == 1:
+
+    if isinstance(left, mt_ast.GroupByField):
+        return mt_ast.CountGroup(
+            left,
+            optargs=optargs
+        )
+
+    elif len(node._args) == 1:
         return mt_ast.Count1(
             left,
             optargs=optargs

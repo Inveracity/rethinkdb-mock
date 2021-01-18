@@ -492,6 +492,11 @@ class Count1(MonExp):
         return len(list(sequence))
 
 
+class CountGroup(MonExp):
+    def do_run(self, sequence, arg, scope):
+        return {k: len(v) for (k, v) in sequence.items()}
+
+
 class CountByEq(BinExp):
     def do_run(self, sequence, to_match, arg, scope):
         return len([elem for elem in sequence if elem == to_match])
