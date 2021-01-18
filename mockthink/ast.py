@@ -1015,11 +1015,11 @@ class DayOfWeek(MonExp):
 
 
 class Now(RBase):
-    def __init__(self, optsargs={}):
-        self.optargs = optsargs
+    def __init__(self, optargs={}):
+        self.optargs = optargs
 
     def run(self, db, scope):
-        return db.get_now_time()
+        return rtime.now()
 
 
 class ToEpochTime(MonExp):
