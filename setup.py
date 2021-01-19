@@ -20,11 +20,12 @@ setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
         "Programming Language :: Python",
+        "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Topic :: Database",
         "Topic :: Software Development :: Testing :: Mocking",
     ],
-    python_requires='>=3.9',
+    python_requires='>=3.8',
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
 )
