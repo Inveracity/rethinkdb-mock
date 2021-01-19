@@ -1,14 +1,10 @@
 from setuptools import setup
 
-version_path = 'rethinkdb_mock/version.py'
-
-exec(open(version_path).read())
-
 
 setup(
     name="rethinkdb_mock",
     zip_safe=True,
-    version=VERSION,
+    version='0.9.9',
     description="A pure-python in-memory mock of rethinkdb (formerly MockThink)",
     url="http://github.com/scivey/rethinkdb_mock",
     maintainer="Christopher Baklid",

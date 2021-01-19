@@ -1,9 +1,8 @@
-name: Release to pypi.org
+name: Release to test.pypi.org
 
 on:
-  release:
-    types: [published]
-    tags-ignore:
+  push:
+    tags:
       - "**dev**"
       - "**rc**"
 
@@ -18,7 +17,7 @@ on:
 
 jobs:
   build:
-    name: Publish to production
+    name: publish to test
     runs-on: ubuntu-latest
 
     steps:
@@ -35,8 +34,9 @@ jobs:
           python -m pip install --upgrade pip
           pip install setuptools wheel
           python setup.py sdist bdist_wheel
-      - name: Publish to PyPI
+      - name: Publish dev/rc build to test.pypi.org
         uses: pypa/gh-action-pypi-publish@v1.3.1
         with:
           user: __token__
-          password: ${{ secrets.PYPI }}
+          password: ${{ secrets.PYPI_TEST }}
+          repository_url: https://test.pypi.org/legacy/
