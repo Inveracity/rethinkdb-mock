@@ -1,9 +1,11 @@
-![build](https://github.com/Inveracity/mockthink/workflows/build/badge.svg?branch=master) ![coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/Inveracity/bade1568c33344c896cbfa5cdef91270/raw/af4b61e83c8705869dba3f8801a28c07d8c6d3e0/coverage.json) ![python](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/Inveracity/5eb80ff1c1b5eedd820a7b827ac02603/raw/e7ac8997ae5bddfec5d6cbc86b948584158acd83/python3.9) ![rethinkdb](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/Inveracity/ee29dbdeafff4549e9a7fb0ad114358c/raw/a4f809e51f9c269af81490c03a7c88a38764b8f3/rethinkdb-python)
+![build](https://github.com/Inveracity/rethinkdb_mock/workflows/build/badge.svg?branch=master) ![coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/Inveracity/bade1568c33344c896cbfa5cdef91270/raw/af4b61e83c8705869dba3f8801a28c07d8c6d3e0/coverage.json) ![python](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/Inveracity/5eb80ff1c1b5eedd820a7b827ac02603/raw/e7ac8997ae5bddfec5d6cbc86b948584158acd83/python3.9) ![rethinkdb](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/Inveracity/ee29dbdeafff4549e9a7fb0ad114358c/raw/a4f809e51f9c269af81490c03a7c88a38764b8f3/rethinkdb-python)
 
 
-# MockThink
+# RethinkDB Mock
 
-MockThink is an in-process Python clone of RethinkDB's API. For testing.
+Formerly known as [MockThink](https://github.com/scivey/mockthink) by Scivey, this is a continuation of that work released under a new name.
+
+Rethinkdb-mock is an in-process Python clone of RethinkDB's API. For testing.
 
 MockThink provides a stub connection object which can be passed to normal ReQL queries. Instead of being serialized and sent to the server, the ReQL AST is run through an interpreter in the same process. "Tables" and "databases" are based on data given to the MockThink constructor.
 
@@ -15,7 +17,7 @@ Avoiding network calls (for tests themselves as well as setup/teardown) makes te
 
 ```python
     from pprint import pprint
-    from mockthink import MockThink
+    from rethinkdb_mock import MockThink
     import rethinkdb as r
 
     db = MockThink({
@@ -69,7 +71,7 @@ Avoiding network calls (for tests themselves as well as setup/teardown) makes te
 
 ```python
     from pprint import pprint
-    from mockthink import MockThink
+    from rethinkdb_mock import MockThink
     import rethinkdb as r
 
     db = MockThink({
@@ -109,14 +111,14 @@ Avoiding network calls (for tests themselves as well as setup/teardown) makes te
 The most confusing test failures are those caused by errors in test frameworks and harnesses themselves.
 This means they need to be tested very thoroughly.
 
-The main testing is a [suite of functional tests](https://github.com/scivey/mockthink/tree/master/mockthink/test/functional) which are targeted at the individual query level,
-e.g. [testing all the ways in which `r.merge` might be called](https://github.com/scivey/mockthink/blob/master/mockthink/test/functional/test_merge.py).
+The main testing is a [suite of functional tests](https://github.com/scivey/rethinkdb_mock/tree/master/rethinkdb_mock/test/functional) which are targeted at the individual query level,
+e.g. [testing all the ways in which `r.merge` might be called](https://github.com/scivey/rethinkdb_mock/blob/master/rethinkdb_mock/test/functional/test_merge.py).
 
 These are all complete ReQL queries, but avoid complexity beyond the target query to make failures easier to diagnose.
 
-The [integration tests](https://github.com/scivey/mockthink/blob/master/mockthink/test/integration/__init__.py) cover more complicated queries, e.g. `eq_join`->`map`->`eq_join`->`map`.
+The [integration tests](https://github.com/scivey/rethinkdb_mock/blob/master/rethinkdb_mock/test/integration/__init__.py) cover more complicated queries, e.g. `eq_join`->`map`->`eq_join`->`map`.
 
-Both the functional and integration tests have two modes of execution, `mockthink` and `rethink`. The second mode runs the same tests against a running RethinkDB instance, and is much slower due to the network calls. `mockthink` mode is for testing MockThink's behavior against our expectations; `rethink` mode is for testing our expectations against reality.
+Both the functional and integration tests have two modes of execution, `rethinkdb_mock` and `rethink`. The second mode runs the same tests against a running RethinkDB instance, and is much slower due to the network calls. `rethinkdb_mock` mode is for testing MockThink's behavior against our expectations; `rethink` mode is for testing our expectations against reality.
 
 ### Run tests
 

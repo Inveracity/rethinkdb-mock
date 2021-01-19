@@ -1,9 +1,9 @@
 from future.utils import iteritems
 import rethinkdb.ast as r_ast
 
-from mockthink import ast as mt_ast
-from mockthink import ast_base
-from mockthink import util
+from rethinkdb_mock import ast as mt_ast
+from rethinkdb_mock import ast_base
+from rethinkdb_mock import util
 
 
 def rewrite_query(query):

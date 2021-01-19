@@ -150,7 +150,7 @@ class TestInsertDurability(MockTest):
         assertEqUnordered(expected, list(result))
 
     # this isn't effectively testing the mock, since the point is that table.sync() doesn't do anything
-    # for the mockthink version.  need to do something better here.
+    # for the rethinkdb_mock version.  need to do something better here.
 
     def test_durability_does_nothing_for_mock_2(self, conn):
         expected = [

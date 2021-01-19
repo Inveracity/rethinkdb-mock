@@ -2,7 +2,7 @@ import unittest
 
 from tests.common import assertEqual
 
-from mockthink import joins
+from rethinkdb_mock import joins
 
 
 class TestJoins(unittest.TestCase):

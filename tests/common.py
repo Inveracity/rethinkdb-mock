@@ -3,8 +3,8 @@ import unittest
 from future.utils import iteritems
 from rethinkdb import r
 
-from mockthink.db import MockThinkConn
-import mockthink.util as util
+from rethinkdb_mock.db import MockThinkConn
+import rethinkdb_mock.util as util
 
 
 def real_stock_data_load(data, connection):

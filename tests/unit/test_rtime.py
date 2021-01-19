@@ -4,7 +4,7 @@ import unittest
 import rethinkdb
 from tests.common import assertEqual
 
-from mockthink import rtime
+from rethinkdb_mock import rtime
 
 
 class TestRTime(unittest.TestCase):

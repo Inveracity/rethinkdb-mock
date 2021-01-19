@@ -4,7 +4,7 @@ from unittest import mock
 
 from tests.common import assertEqual
 
-from mockthink import util
+from rethinkdb_mock import util
 
 
 class TestUtil(unittest.TestCase):
@@ -54,7 +54,7 @@ class TestUtil(unittest.TestCase):
         assertEqual([7, 8, 9], list_2)
 
     def test_extend_with(self):
-        with mock.patch('mockthink.util.extend') as extend:
+        with mock.patch('rethinkdb_mock.util.extend') as extend:
             extend.return_value = 'EXTENDED'
             util.extend_with('X', 'Y')
             util.extend_with('X')('Y')

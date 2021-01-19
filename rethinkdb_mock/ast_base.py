@@ -2,7 +2,7 @@ from future.utils import iteritems
 from rethinkdb.errors import RqlCompileError
 from rethinkdb.errors import RqlRuntimeError
 
-from mockthink import util
+from rethinkdb_mock import util
 
 
 class AttrHaving(object):

@@ -2,7 +2,7 @@ import unittest
 
 from tests.common import assertEqual
 
-from mockthink import ast_base
+from rethinkdb_mock import ast_base
 
 
 class TestAst(unittest.TestCase):

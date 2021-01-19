@@ -282,7 +282,7 @@ class MockDb(object):
         return self.get_db(db_name).get_table(table_name).is_multi_index(index_name)
 
     def get_now_time(self):
-        return self.mockthink.get_now_time()
+        return self.rethinkdb_mock.get_now_time()
 
 
 def objects_from_pods(data):
@@ -303,14 +303,14 @@ def objects_from_pods(data):
 
 
 class MockThinkConn(object):
-    def __init__(self, mockthink_parent):
-        self.mockthink_parent = mockthink_parent
+    def __init__(self, rethinkdb_mock_parent):
+        self.rethinkdb_mock_parent = rethinkdb_mock_parent
 
     def reset_data(self, data):
-        self.mockthink_parent._modify_initial_data(data)
+        self.rethinkdb_mock_parent._modify_initial_data(data)
 
     def _start(self, rql_query, **global_optargs):
-        return self.mockthink_parent.run_query(rewrite_query(rql_query))
+        return self.rethinkdb_mock_parent.run_query(rewrite_query(rql_query))
 
     def is_open(self):
         return True
@@ -358,7 +358,7 @@ class MockThink(object):
 
     def reset(self):
         self.data = objects_from_pods(self.initial_data)
-        self.data.mockthink = self
+        self.data.rethinkdb_mock = self
 
     def get_conn(self):
         conn = MockThinkConn(self)

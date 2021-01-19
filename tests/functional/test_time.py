@@ -9,7 +9,7 @@ from tests.common import assertEqual
 from tests.common import assertEqUnordered
 from tests.functional.common import MockTest
 
-from mockthink import rtime
+from rethinkdb_mock import rtime
 
 
 class TestDateTimeGetters(MockTest):

@@ -6,7 +6,7 @@ from tests.common import assertEqual
 from tests.common import assertEqUnordered
 from tests.functional.common import MockTest
 
-from mockthink.util import DictableSet
+from rethinkdb_mock.util import DictableSet
 
 
 class TestDistinctTop(MockTest):

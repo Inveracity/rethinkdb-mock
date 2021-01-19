@@ -1,7 +1,7 @@
 from tests.common import assertEqual
 from tests.common import TestCase
 
-from mockthink import db
+from rethinkdb_mock import db
 
 
 def db_insert_starting_data():

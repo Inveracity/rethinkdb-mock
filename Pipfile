@@ -20,6 +20,6 @@ rethinkdb = ">=2.4.8"
 python_version = "3.9"
 
 [scripts]
-test = "pytest --cov mockthink -vv"
+test = "pytest --cov rethinkdb_mock -vv"
 isort = "isort ."
 lint = "flake8 ."

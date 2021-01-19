@@ -10,19 +10,19 @@ from future.utils import iteritems
 from future.utils import text_type
 from past.utils import old_div
 
-from mockthink import ast_base
-from mockthink import joins
-from mockthink import rtime
-from mockthink import util
-from mockthink.ast_base import BinExp
-from mockthink.ast_base import ByFuncBase
-from mockthink.ast_base import LITERAL_OBJECT
-from mockthink.ast_base import MakeArray
-from mockthink.ast_base import MonExp
-from mockthink.ast_base import RBase
-from mockthink.ast_base import RFunc
-from mockthink.ast_base import Ternary
-from mockthink.scope import Scope
+from rethinkdb_mock import ast_base
+from rethinkdb_mock import joins
+from rethinkdb_mock import rtime
+from rethinkdb_mock import util
+from rethinkdb_mock.ast_base import BinExp
+from rethinkdb_mock.ast_base import ByFuncBase
+from rethinkdb_mock.ast_base import LITERAL_OBJECT
+from rethinkdb_mock.ast_base import MakeArray
+from rethinkdb_mock.ast_base import MonExp
+from rethinkdb_mock.ast_base import RBase
+from rethinkdb_mock.ast_base import RFunc
+from rethinkdb_mock.ast_base import Ternary
+from rethinkdb_mock.scope import Scope
 
 # #################
 #   Query handlers

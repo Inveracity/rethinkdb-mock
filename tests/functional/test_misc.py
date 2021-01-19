@@ -5,7 +5,7 @@ from tests.common import assertEqual
 from tests.common import assertEqUnordered
 from tests.functional.common import MockTest
 
-from mockthink import util
+from rethinkdb_mock import util
 
 
 class TestGet(MockTest):
