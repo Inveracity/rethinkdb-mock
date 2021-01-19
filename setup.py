@@ -1,8 +1,10 @@
+from pathlib import Path
 from setuptools import setup
 
 version_path = 'rethinkdb_mock/version.py'
 
 exec(open(version_path).read())
+
 
 setup(
     name="rethinkdb_mock",
@@ -16,9 +18,14 @@ setup(
     package_dir={'rethinkdb_mock': 'rethinkdb_mock'},
     install_requires=['rethinkdb>=2.4.8', 'python-dateutil', 'future'],
     classifiers=[
-        "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
+        "Programming Language :: Python",
+        "Programming Language :: Python :: 3.9",
+        "Topic :: Database",
+        "Topic :: Software Development :: Testing :: Mocking",
     ],
     python_requires='>=3.9',
+    long_description=open('README.md').read(),
+    long_description_content_type='text/markdown',
 )
