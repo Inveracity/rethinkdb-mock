@@ -324,3 +324,38 @@ class TestTimeComparison(MockTest):
         result = table.filter(new).run(conn)
         result = list(result)
         assertEqual(1, len(result))
+
+
+class TestTimeCalculation(MockTest):
+    @staticmethod
+    def get_data():
+        data = [
+            {'id': 'present', 'last_updated': rtime.now()},  # Present
+            {'id': 'past', 'last_updated': rtime.make_time(2020, 6, 3)},  # Past
+            {'id': 'future', 'last_updated': rtime.make_time(2030, 6, 3)}  # Future
+        ]
+        return as_db_and_table('d', 'people', data)
+
+    def test_subtract_seconds(self, conn):
+        """
+        Find entries older than 3 hours
+        """
+        table = r.db('d').table('people')
+
+        three_hours = 10_800
+        old = r.row["last_updated"].lt(r.now().sub(three_hours))
+        result = table.filter(old).run(conn)
+        result = list(result)
+        assertEqual("past", result[0]['id'])
+
+    def test_add_seconds(self, conn):
+        """
+        Find entries from 3 hours ago to now
+        """
+        table = r.db('d').table('people')
+
+        three_hours = 10_800
+        old = r.row["last_updated"].lt(r.now().add(three_hours))
+        result = table.filter(old).run(conn)
+        result = list(result)
+        assertEqual(2, len(result))  # present and future
