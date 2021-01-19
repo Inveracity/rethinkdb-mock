@@ -10,6 +10,14 @@ MockThink provides a stub connection object which can be passed to normal ReQL q
 
 Avoiding network calls (for tests themselves as well as setup/teardown) makes testing queries with MockThink orders of magnitude faster.
 
+# Install
+
+```sh
+pip install rethinkdb-mock
+# or
+pipenv install --dev rethinkdb-mock
+```
+
 ## Usage
 
 ### Basic

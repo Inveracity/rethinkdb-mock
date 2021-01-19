@@ -6,7 +6,7 @@ setup(
     zip_safe=True,
     version='0.9.9',
     description="A pure-python in-memory mock of rethinkdb (formerly MockThink)",
-    url="http://github.com/scivey/rethinkdb_mock",
+    url="https://github.com/Inveracity/rethinkdb-mock",
     maintainer="Christopher Baklid",
     maintainer_email="cbaklid@gmail.com",
     packages=['rethinkdb_mock'],
