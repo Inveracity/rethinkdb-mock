@@ -1,4 +1,3 @@
-from pathlib import Path
 from setuptools import setup
 
 version_path = 'rethinkdb_mock/version.py'

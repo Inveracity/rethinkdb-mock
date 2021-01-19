@@ -9,5 +9,4 @@ tmp
 dist
 *.egg-info
 .coverage
-.vscode/
 htmlcov/
