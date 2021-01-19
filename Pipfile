@@ -18,7 +18,7 @@ python-dateutil = "*"
 rethinkdb = ">=2.4.8"
 
 [requires]
-python_version = "3.9"
+python_version = "3"
 
 [scripts]
 test = "pytest --cov rethinkdb_mock -vv"
