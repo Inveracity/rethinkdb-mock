@@ -1,3 +1,4 @@
+import datetime
 import json
 import operator
 from pprint import pprint
@@ -196,6 +197,9 @@ class GetAll(BinExp):
 
 class BinOp(BinExp):
     def do_run(self, left, right, arg, scope):
+        if isinstance(left, datetime.datetime) and isinstance(right, int):
+            return self.__class__.binop(left, datetime.timedelta(seconds=right))
+
         return self.__class__.binop(left, right)
 
 
