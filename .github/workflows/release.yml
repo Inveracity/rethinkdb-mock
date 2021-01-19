@@ -7,6 +7,15 @@ on:
       - '**dev**'
       - '**rc**'
 
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Log level'
+        required: true
+        default: 'warning'
+      tags:
+        description: 'run publishing workflow'
+
 
 jobs:
   build:
