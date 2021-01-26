@@ -97,7 +97,7 @@ class TestFiltering(MockTest):
 
         result = r.db('x').table('people').filter(not_joe & not_bob & (kimye | bill)).run(conn)  # not joe and not bob and either kimye or bill
 
-        assertEqual(sorted(expected, key = lambda i: i['age']), sorted(list(result), key = lambda i: i['age']))
+        assertEqual(sorted(expected, key=lambda i: i['age']), sorted(list(result), key=lambda i: i['age']))
 
 
 class TestMapping(MockTest):
