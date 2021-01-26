@@ -86,8 +86,8 @@ class TestFiltering(MockTest):
         Test bitwise operators and other bitwise operators
         """
         expected = [
-            {'id': 'bill-id', 'name': 'bill', 'age': 35},
-            {'id': 'kimye-id', 'name': 'kimye', 'age': 17}
+            {'id': 'kimye-id', 'name': 'kimye', 'age': 17},
+            {'id': 'bill-id', 'name': 'bill', 'age': 35}
         ]
 
         not_joe = r.row["id"] != "joe-id"
@@ -97,7 +97,7 @@ class TestFiltering(MockTest):
 
         result = r.db('x').table('people').filter(not_joe & not_bob & (kimye | bill)).run(conn)  # not joe and not bob and either kimye or bill
 
-        assertEqual(expected, list(result))
+        assertEqual(sorted(expected, key = lambda i: i['age']), sorted(list(result), key = lambda i: i['age']))
 
 
 class TestMapping(MockTest):

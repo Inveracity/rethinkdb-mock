@@ -22,5 +22,7 @@ python_version = "3"
 
 [scripts]
 test = "pytest --cov rethinkdb_mock -vv"
+test_live = "pytest --cov rethinkdb_mock -vv -x --run rethink"
+last_live = "pytest --cov rethinkdb_mock -vv -x --run rethink --last-failed"
 isort = "isort ."
 lint = "flake8 ."

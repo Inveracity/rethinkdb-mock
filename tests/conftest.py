@@ -1,7 +1,7 @@
 import logging
 
 import pytest
-from pytest_server_fixtures.rethink import rethink_server_sess
+from pytest_server_fixtures.rethink import _rethink_server
 import rethinkdb
 from tests.common import as_db_and_table
 from tests.common import load_stock_data
@@ -28,7 +28,7 @@ def conn_sess(request):
     conn_type = cfg.getvalue("conn_type")
     if conn_type == "rethink":
         try:
-            server = rethink_server_sess(request)
+            server = _rethink_server(request)
             conn = server.conn
         except rethinkdb.errors.ReqlDriverError:
             pytest.exit("Unable to connect to rethink")
