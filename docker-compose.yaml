@@ -1,0 +1,9 @@
+version: "3.7"
+services:
+  python:
+    image: rethinkdb-mock
+    build:
+      context: .
+      dockerfile: docker/test_live.Dockerfile
+    container_name: integration-test
+    command: ["pipenv", "run", "test_live"]
