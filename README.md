@@ -138,6 +138,16 @@ pipenv sync --dev
 pipenv run test
 ```
 
+### Run tests against a live server
+
+The docker folder contains a dockerfile that grabs rethinkdb and runs the python tests
+
+Simple running the below command outputs the results
+
+```bash
+docker-compose up --build
+```
+
 ## Code formatting
 
 The `tox.ini` file contains the configuration for code formatting
