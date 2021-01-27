@@ -25,17 +25,13 @@
 # and adapted to be compatible with Rethinkdb Python Client 2.4.8              #
 ################################################################################
 
-import socket
-import uuid
 import logging
+import uuid
 
 import pytest
-
-from pytest_server_fixtures import CONFIG
 from pytest_fixture_config import requires_config
-
+from pytest_server_fixtures import CONFIG
 from pytest_server_fixtures.base2 import TestServerV2
-
 
 log = logging.getLogger(__name__)
 rethinkdb = None
@@ -153,7 +149,6 @@ class RethinkDBServer(TestServerV2):
         self._cluster_port = self._get_port(29015)
         self._http_port = self._get_port(8080)
         self.db = None
-
 
     @property
     def cmd(self):
