@@ -1,10 +1,10 @@
 import logging
 
 import pytest
-from pytest_server_fixtures.rethink import _rethink_server
 import rethinkdb
 from tests.common import as_db_and_table
 from tests.common import load_stock_data
+from tests.fixtures import _rethink_server
 
 from rethinkdb_mock import MockThink
 
