@@ -146,7 +146,7 @@ pipenv run test
 
 The docker folder contains a dockerfile that grabs rethinkdb and runs the python tests
 
-Simple running the below command outputs the results
+Simply running the below command outputs the results
 
 ```bash
 docker-compose up --build
