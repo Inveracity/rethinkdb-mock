@@ -1,4 +1,8 @@
-![build](https://github.com/Inveracity/rethinkdb-mock/workflows/build/badge.svg?branch=master) ![coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/Inveracity/bade1568c33344c896cbfa5cdef91270/raw/af4b61e83c8705869dba3f8801a28c07d8c6d3e0/coverage.json) ![python](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/Inveracity/5eb80ff1c1b5eedd820a7b827ac02603/raw/0b8d7cb67274354d05cc3defcb522186b3ca01a8/python3.9) ![rethinkdb](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/Inveracity/ee29dbdeafff4549e9a7fb0ad114358c/raw/a4f809e51f9c269af81490c03a7c88a38764b8f3/rethinkdb-python)
+![build](https://github.com/Inveracity/rethinkdb-mock/workflows/build/badge.svg?branch=master)
+![coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/Inveracity/bade1568c33344c896cbfa5cdef91270/raw/af4b61e83c8705869dba3f8801a28c07d8c6d3e0/coverage.json)
+![python](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/Inveracity/5eb80ff1c1b5eedd820a7b827ac02603/raw/0b8d7cb67274354d05cc3defcb522186b3ca01a8/python3.9)
+![rethinkdb](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/Inveracity/ee29dbdeafff4549e9a7fb0ad114358c/raw/a4f809e51f9c269af81490c03a7c88a38764b8f3/rethinkdb-python)
+[![PyPI version](https://badge.fury.io/py/rethinkdb-mock.svg)](https://pypi.org/project/rethinkdb-mock/)
 
 # RethinkDB Mock
 
