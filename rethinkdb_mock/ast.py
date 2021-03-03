@@ -391,7 +391,6 @@ class WithoutPoly(BinExp):
 
 class PluckPoly(BinExp):
     def do_run(self, left, attrs, arg, scope):
-        print(attrs)
         if isinstance(attrs, str):
             attrs = [attrs]
 

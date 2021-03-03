@@ -225,8 +225,9 @@ def pluck_extended(query: dict, data, path=None):
                 value = value[p]
             # In cases where there's no data, simply move on
             except KeyError:
-                return {query: value}
-            return {query: value}
+                return dict()
+
+        return {query: value}
 
     # If query is a list, do a recursive search
     if isinstance(query, list):
@@ -243,9 +244,6 @@ def pluck_extended(query: dict, data, path=None):
 
 def pluck_with(attrs):
     def inner_pluck(thing):
-        # if isinstance(attrs, tuple):
-        # return {k: v for k, v in iteritems(thing) if k in attrs}
-
         ret = pluck_extended(attrs, thing)
 
         print(f"TYPE   = {type(attrs)}")
