@@ -1,7 +1,6 @@
 import datetime
 import json
 import operator
-from pprint import pprint
 import random
 import uuid
 
@@ -31,7 +30,6 @@ from rethinkdb_mock.scope import Scope
 
 class Literal(MonExp):
     def do_run(self, obj, arg, scope):
-        pprint({'literal': obj})
         return LITERAL_OBJECT.from_dict(obj)
 
 
@@ -393,11 +391,10 @@ class WithoutPoly(BinExp):
 
 class PluckPoly(BinExp):
     def do_run(self, left, attrs, arg, scope):
-        pprint({
-            'left': left,
-            'attrs': attrs
-        })
-        return util.maybe_map(util.pluck_with(*attrs), left)
+        if isinstance(attrs, str):
+            attrs = [attrs]
+
+        return util.maybe_map(util.pluck_with(attrs), left)
 
 
 class MergePoly(BinExp):

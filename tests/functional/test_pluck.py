@@ -86,3 +86,27 @@ class TestPlucking2(MockTest):
         ]
         result = r.db('some_db').table('things').map(lambda t: t['values'].pluck('a', 'd')).run(conn)
         assertEqUnordered(expected, list(result))
+
+    def test_sub_dict(self, conn):
+        expected = [
+            {"values": {"a": "a-1"}},
+            {"values": {"a": "a-2"}}
+        ]
+        result = r.db('some_db').table('things').pluck({'values': 'a'}).run(conn)
+        assertEqUnordered(expected, result)
+
+    def test_sub_dict2(self, conn):
+        expected = [
+            {"id": "thing-1", "values": {"a": "a-1"}},
+            {"id": "thing-2", "values": {"a": "a-2"}}
+        ]
+        result = r.db('some_db').table('things').pluck('id', {'values': 'a'}).run(conn)
+        assertEqUnordered(expected, result)
+
+    def test_sub_dict_list(self, conn):
+        expected = [
+            {"id": "thing-1", "values": {"a": "a-1", "b": "b-1"}},
+            {"id": "thing-2", "values": {"a": "a-2", "b": "b-2"}}
+        ]
+        result = r.db('some_db').table('things').pluck('id', {'values': ['a', 'b']}).run(conn)
+        assertEqUnordered(expected, result)

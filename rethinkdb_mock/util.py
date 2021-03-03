@@ -212,9 +212,39 @@ def pipeline(*funcs):
     return out
 
 
-def pluck_with(*attrs):
+def pluck_extended(query: dict, data, path=None):
+    # Deal with default mutable args
+    if path is None:
+        path = []
+
+    # If query is a string, return a string value
+    if isinstance(query, str):
+        value = data
+        for p in path + [query]:
+            try:
+                value = value[p]
+            # In cases where there's no data, simply move on
+            except KeyError:
+                return dict()
+
+        return {query: value}
+
+    # If query is a list, do a recursive search
+    if isinstance(query, list):
+        return {
+            k: v for subresult in [pluck_extended(subquery, data, path) for subquery in query] for k, v in subresult.items()
+        }
+
+    # If query is a dict, do a recursive search continuing down this path
+    if isinstance(query, dict):
+        return {
+            subkey: pluck_extended(subquery, data, path + [subkey]) for subkey, subquery in query.items()
+        }
+
+
+def pluck_with(attrs):
     def inner_pluck(thing):
-        return {k: v for k, v in iteritems(thing) if k in attrs}
+        return pluck_extended(attrs, thing)
     return inner_pluck
 
 
