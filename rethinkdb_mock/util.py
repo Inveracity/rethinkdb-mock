@@ -244,14 +244,7 @@ def pluck_extended(query: dict, data, path=None):
 
 def pluck_with(attrs):
     def inner_pluck(thing):
-        ret = pluck_extended(attrs, thing)
-
-        print(f"TYPE   = {type(attrs)}")
-        print(f"ATTRS  = {attrs}")
-        print(f"THING  = {thing}")
-        print(f"RESULT = {ret}")
-        return ret
-
+        return pluck_extended(attrs, thing)
     return inner_pluck
 
 
