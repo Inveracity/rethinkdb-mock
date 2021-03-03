@@ -69,7 +69,7 @@ def rethink_server_sess(request):
     return _rethink_server(request)
 
 
-@pytest.yield_fixture(scope="function")
+@pytest.fixture(scope="function")
 def rethink_unique_db(rethink_server_sess):
     """ Starts up a session-scoped server, and returns a connection to
         a unique database for the life of a single test, and drops it after
@@ -82,7 +82,7 @@ def rethink_unique_db(rethink_server_sess):
     r.db_drop(dbid).run(conn)
 
 
-@pytest.yield_fixture(scope="module")
+@pytest.fixture(scope="module")
 def rethink_module_db(rethink_server_sess):
     """ Starts up a module-scoped server, and returns a connection to
         a unique database for all the tests in one module.
@@ -115,7 +115,7 @@ def rethink_make_tables(request, rethink_module_db):
             log.debug('Table "{0}" not made: {1}'.format(table_name, err.message))
 
 
-@pytest.yield_fixture(scope="function")
+@pytest.fixture(scope="function")
 def rethink_empty_db(request, rethink_module_db, rethink_make_tables):
     """ Function-scoped fixture that will empty all the tables defined
         for the `rethink_make_tables` fixture.

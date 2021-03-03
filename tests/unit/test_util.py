@@ -123,7 +123,7 @@ class TestUtil(unittest.TestCase):
         assertEqual({
             'x': 'x-val',
             'y': 'y-val',
-        }, util.pluck_with('x', 'y')(obj))
+        }, util.pluck_with(['x', 'y'])(obj))
 
     def test_pipeline(self):
         def add_5(x):

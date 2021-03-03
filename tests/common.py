@@ -57,5 +57,5 @@ class TestCase(unittest.TestCase):
         return assertEqUnordered(x, y, msg)
 
     def assert_key_equality(self, keys, dict1, dict2):
-        pluck = util.pluck_with(*keys)
+        pluck = util.pluck_with(keys)
         assertEqual(pluck(dict1), pluck(dict2))
