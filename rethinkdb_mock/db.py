@@ -315,6 +315,9 @@ class MockThinkConn(object):
     def is_open(self):
         return True
 
+    def close(self):
+        return True
+
 
 class MockThink(object):
     def __init__(self, initial_data):
