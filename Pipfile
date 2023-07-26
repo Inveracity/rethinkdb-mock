@@ -11,12 +11,12 @@ isort = "*"
 pytest = "*"
 pytest-cov = "*"
 pytest-server-fixtures = "*"
+exceptiongroup = "*"
 
 [packages]
 future = "*"
 python-dateutil = "*"
 rethinkdb = ">=2.4.8"
-exceptiongroup = "*"
 
 [requires]
 python_version = "3"
