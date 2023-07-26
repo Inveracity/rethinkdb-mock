@@ -1,6 +1,5 @@
 from setuptools import setup
 
-
 setup(
     name="rethinkdb_mock",
     zip_safe=True,

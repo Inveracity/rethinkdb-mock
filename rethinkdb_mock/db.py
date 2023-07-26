@@ -6,9 +6,10 @@ import rethinkdb
 
 from . import rtime
 from . import util
-from .rql_rewrite import rewrite_query, RQL_TYPE_TRANSLATIONS
-from .scope import Scope
 from .ast_base import BinExp
+from .rql_rewrite import rewrite_query
+from .rql_rewrite import RQL_TYPE_TRANSLATIONS
+from .scope import Scope
 
 
 def fill_missing_report_results(report):
@@ -199,7 +200,7 @@ class MockDbData(object):
 
 
 class MockDb(object):
-    def __init__(self, dbs_by_name, defaultDB = None):
+    def __init__(self, dbs_by_name, defaultDB=None):
         self.dbs_by_name = dbs_by_name
         self.defaultDB = defaultDB
 
@@ -308,6 +309,7 @@ def objects_from_pods(data):
 
     return MockDb(dbs_by_name, defaultDB)
 
+
 def set_default_db(query, name):
     if len(query._args) > 0:
         if not (query._args[0].__class__ in RQL_TYPE_TRANSLATIONS and issubclass(RQL_TYPE_TRANSLATIONS[query._args[0].__class__], BinExp)):
@@ -319,6 +321,7 @@ def set_default_db(query, name):
     else:
         if query.__class__ in RQL_TYPE_TRANSLATIONS and issubclass(RQL_TYPE_TRANSLATIONS[query.__class__], BinExp):
             query._args = [rethinkdb.ast.DB(name)]
+
 
 class MockThinkConn(object):
     def __init__(self, rethinkdb_mock_parent):
