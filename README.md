@@ -76,6 +76,47 @@ pipenv install --dev rethinkdb-mock
         # ]
 ```
 
+### Set the default database for the connection
+
+> Like `r.connect(db='database')`
+
+```python
+    from pprint import pprint
+    from rethinkdb_mock import MockThink
+    import rethinkdb as r
+
+    db = MockThink({
+        'dbs': {
+            'tara': {
+                'tables': {
+                    'people': [
+                        {'id': 'john-id', 'first_name': 'John', 'last_name': 'Generic'},
+                        {'id': 'sam-id', 'first_name': 'Sam', 'last_name': 'Dull'},
+                        {'id': 'adam-id', 'first_name': 'Adam', 'last_name': 'Average'}
+                    ]
+                }
+            }
+        }
+        'default': 'tara'
+    })
+
+    with db.connect() as conn:
+
+        r.db('tara').table('people').index_create(
+            'full_name',
+            lambda doc: doc['last_name'] + doc['first_name']
+        ).run(conn)
+
+        r.table('people').index_wait().run(conn)
+
+        result = r..table('people').get_all(
+            'GenericJohn', 'AverageAdam', index='full_name'
+        ).run(conn)
+        pprint(list(result))
+        # {'id': 'john-id', 'first_name': 'John', 'last_name': 'Generic'},
+        # {'id': 'adam-id', 'first_name': 'Adam', 'last_name': 'Average'}
+```
+
 ### Full support for secondary indexes
 
 ```python

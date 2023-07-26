@@ -726,6 +726,17 @@ class DbList(RBase):
     def run(self, arg, scope):
         return arg.list_dbs()
 
+class TableListTL(RBase):
+    def __init__(self, *args, **kwargs):
+        pass
+
+    def run(self, arg, scope):
+        tables = []
+        for db in arg.list_dbs():
+            tables += arg.list_tables_in_db(db)
+
+        return tables
+
 #   #################################
 #     Index manipulation functions
 #   #################################
