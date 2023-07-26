@@ -1,6 +1,6 @@
-FROM rethinkdb:2.4.1-buster-slim as rdb
+FROM rethinkdb:2.4.2-bullseye-slim as rdb
 
-FROM python:3.9-slim-buster
+FROM python:3.11-slim-bullseye
 
 RUN apt update && apt install -y \
     libcurl4-openssl-dev \
