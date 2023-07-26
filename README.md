@@ -26,9 +26,10 @@ pipenv install --dev rethinkdb-mock
 
 ```python
 from pprint import pprint
+from rethinkdb import RethinkDB
 from rethinkdb_mock import MockThink
-import rethinkdb as r
 
+r = RethinkDB()
 db = MockThink({
     'dbs': {
         'tara': {
@@ -42,38 +43,39 @@ db = MockThink({
     }
 })
 
-with db.connect() as conn:
-    result = r.db('tara').table('people').map(
-        lambda doc: doc.merge({'also_name': doc['name']})
-    ).run(conn)
-    pprint(list(result))
+def test_mytest():
+    with db.connect() as conn:
+        result = r.db('tara').table('people').map(
+            lambda doc: doc.merge({'also_name': doc['name']})
+        ).run(conn)
+        pprint(list(result))
 
-    # [
-    #    {'also_name': 'John', 'id': 'john-id', 'name': 'John'},
-    #    {'also_name': 'Sam', 'id': 'sam-id', 'name': 'Sam'}
-    # ]
+        # [
+        #    {'also_name': 'John', 'id': 'john-id', 'name': 'John'},
+        #    {'also_name': 'Sam', 'id': 'sam-id', 'name': 'Sam'}
+        # ]
 
-    r.db('tara').table('people').update(
-        {'likes_fonz': True}
-    ).run(conn)
+        r.db('tara').table('people').update(
+            {'likes_fonz': True}
+        ).run(conn)
 
-    result = r.db('tara').table('people').run(conn)
-    pprint(list(result))
+        result = r.db('tara').table('people').run(conn)
+        pprint(list(result))
 
-    # [
-    #    {'id': 'john-id', 'likes_fonz': True, 'name': 'John'},
-    #    {'id': 'sam-id', 'likes_fonz': True, 'name': 'Sam'}
-    # ]
+        # [
+        #    {'id': 'john-id', 'likes_fonz': True, 'name': 'John'},
+        #    {'id': 'sam-id', 'likes_fonz': True, 'name': 'Sam'}
+        # ]
 
-# data is reset at exit of context manager above
+    # data is reset at exit of context manager above
 
-with db.connect() as conn:
-    result = r.db('tara').table('people').run(conn)
-    pprint(list(result))
-    # [
-    #    {'id': 'john-id', 'name': 'John'},
-    #    {'id': 'sam-id', 'name': 'Sam'}
-    # ]
+    with db.connect() as conn:
+        result = r.db('tara').table('people').run(conn)
+        pprint(list(result))
+        # [
+        #    {'id': 'john-id', 'name': 'John'},
+        #    {'id': 'sam-id', 'name': 'Sam'}
+        # ]
 ```
 
 ### Set the default database for the connection
