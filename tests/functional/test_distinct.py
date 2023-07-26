@@ -58,6 +58,6 @@ class TestDistinctNested(MockTest):
         for elem in result:
             if isinstance(elem[0], dict):
                 for dict_elem in elem:
-                    assert(ex2.has(dict_elem))
+                    assert (ex2.has(dict_elem))
             else:
                 assertEqual(ex1, set(elem))

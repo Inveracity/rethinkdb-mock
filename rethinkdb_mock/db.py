@@ -61,7 +61,7 @@ def remove_array_elems_by_id(existing, to_remove):
 
 
 def insert_into_table_with_conflict_setting(existing, to_insert, conflict):
-    assert(conflict in ('error', 'update', 'replace'))
+    assert (conflict in ('error', 'update', 'replace'))
     existing_by_id = {row['id']: row for row in existing}
     seen = set([])
     result = []
@@ -114,7 +114,7 @@ class MockTableData(object):
         return MockTableData(self.name, new_data, self.indexes), report
 
     def insert(self, new_rows, conflict):
-        assert(conflict in ('error', 'update', 'replace'))
+        assert (conflict in ('error', 'update', 'replace'))
         if not isinstance(new_rows, list):
             new_rows = [new_rows]
         new_data, report = insert_into_table_with_conflict_setting(self.rows, new_rows, conflict)
@@ -191,7 +191,7 @@ class MockDbData(object):
         return self.tables_by_name[table_name]
 
     def set_table(self, table_name, new_table_instance):
-        assert(isinstance(new_table_instance, MockTableData))
+        assert (isinstance(new_table_instance, MockTableData))
         tables = util.obj_clone(self.tables_by_name)
         tables[table_name] = new_table_instance
         return MockDbData(tables)
@@ -205,7 +205,7 @@ class MockDb(object):
         return self.dbs_by_name[db_name]
 
     def set_db(self, db_name, db_data_instance):
-        assert(isinstance(db_data_instance, MockDbData))
+        assert (isinstance(db_data_instance, MockDbData))
         dbs_by_name = util.obj_clone(self.dbs_by_name)
         dbs_by_name[db_name] = db_data_instance
         return MockDb(dbs_by_name)
@@ -233,13 +233,13 @@ class MockDb(object):
         return list(self.dbs_by_name.keys())
 
     def replace_table_in_db(self, db_name, table_name, table_data_instance):
-        assert(isinstance(table_data_instance, MockTableData))
+        assert (isinstance(table_data_instance, MockTableData))
         db = self.get_db(db_name)
         new_db = db.set_table(table_name, table_data_instance)
         return self.set_db(db_name, new_db)
 
     def insert_into_table_in_db(self, db_name, table_name, elem_list, conflict):
-        assert(conflict in ('error', 'update', 'replace'))
+        assert (conflict in ('error', 'update', 'replace'))
         new_table_data, report = self.get_db(db_name).get_table(table_name).insert(elem_list, conflict)
         return self._replace_table(db_name, table_name, new_table_data), report
 

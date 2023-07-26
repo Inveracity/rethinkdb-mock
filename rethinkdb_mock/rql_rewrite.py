@@ -21,7 +21,7 @@ def type_dispatch(rql_node):
 @util.curry2
 def handles_type(rql_type, func):
     def handler(node):
-        assert(type(node) == rql_type)
+        assert (type(node) == rql_type)
         return func(node)
     RQL_TYPE_HANDLERS[rql_type] = handler
     return handler
@@ -67,7 +67,7 @@ def handle_generic_binop_poly_2(mt_type_map, node):
 
 @util.curry2
 def handle_generic_ternop(Mt_Constructor, node):
-    assert(len(node._args) == 3)
+    assert (len(node._args) == 3)
     return Mt_Constructor(*[type_dispatch(arg) for arg in node._args], optargs=process_optargs(node))
 
 
@@ -369,7 +369,7 @@ def plain_val_of_datum(datum_node):
 
 
 def plain_list_of_make_array(make_array_instance):
-    assert(isinstance(make_array_instance, r_ast.MakeArray))
+    assert (isinstance(make_array_instance, r_ast.MakeArray))
     return list(map(plain_val_of_datum, make_array_instance._args))
 
 
@@ -403,7 +403,7 @@ def handle_order_by(node):
             right.append(mt_ast.Asc(type_dispatch(elem)))
         else:
             accepted = (r_ast.Desc, r_ast.Asc, r_ast.Func)
-            assert(elem.__class__ in accepted)
+            assert (elem.__class__ in accepted)
             right.append(type_dispatch(elem))
     if optargs.get("index"):
         right.append(mt_ast.Asc(type_dispatch(r_ast.Datum(optargs["index"]))))
