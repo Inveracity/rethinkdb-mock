@@ -104,7 +104,7 @@ class TestInsert(MockTest):
         result = list(result)
         assertEqual(1, len(result))
         joe = result[0]
-        assert(isinstance(joe['id'], text_type))
+        assert (isinstance(joe['id'], text_type))
 
     def test_insert_array_no_ids(self, conn):
         r.db('things').table('muppets').insert([
@@ -122,8 +122,8 @@ class TestInsert(MockTest):
         }).run(conn)
         result = list(result)
         assertEqual(2, len(result))
-        assert(isinstance(result[0]['id'], text_type))
-        assert(isinstance(result[1]['id'], text_type))
+        assert (isinstance(result[0]['id'], text_type))
+        assert (isinstance(result[1]['id'], text_type))
 
 
 class TestInsertDurability(MockTest):
@@ -422,7 +422,7 @@ class TestUpdateNestedQuery(MockTest):
             ).run(conn)
         except RqlRuntimeError as e:
             err = e
-        assert(isinstance(err, RqlRuntimeError))
+        assert (isinstance(err, RqlRuntimeError))
 
     def test_update_nonatomic_error_is_default(self, conn):
         err = None
@@ -432,7 +432,8 @@ class TestUpdateNestedQuery(MockTest):
             ).run(conn)
         except RqlRuntimeError as e:
             err = e
-        assert(isinstance(err, RqlRuntimeError))
+
+        assert (isinstance(err, RqlRuntimeError))
 
 
 class TestUpdateReturnChanges(MockTest):

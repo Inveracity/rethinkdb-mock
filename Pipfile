@@ -16,6 +16,7 @@ pytest-server-fixtures = "*"
 future = "*"
 python-dateutil = "*"
 rethinkdb = ">=2.4.8"
+exceptiongroup = "*"
 
 [requires]
 python_version = "3"

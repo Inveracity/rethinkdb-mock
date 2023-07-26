@@ -182,19 +182,19 @@ class TestSample(MockTest):
             lambda doc: doc['data'].sample(3)
         ).run(conn)
         result = list(result)
-        assert(len(result) == 1)
+        assert (len(result) == 1)
         result = result[0]
-        assert(len(result) == 3)
+        assert (len(result) == 3)
         for num in result:
-            assert(num <= 20)
-            assert(num >= 10)
+            assert (num <= 20)
+            assert (num >= 10)
 
     def test_docs(self, conn):
         result = r.db('db').table('things').sample(2).run(conn)
         result = list(result)
-        assert(len(result) == 2)
+        assert (len(result) == 2)
         doc1, doc2 = result
-        assert(doc1 != doc2)
+        assert (doc1 != doc2)
         ids = set(['one', 'two', 'three'])
-        assert(doc1['id'] in ids)
-        assert(doc2['id'] in ids)
+        assert (doc1['id'] in ids)
+        assert (doc2['id'] in ids)

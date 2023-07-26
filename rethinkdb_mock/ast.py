@@ -668,7 +668,7 @@ class ContainsElems(BinExp):
 
 class ContainsFuncs(RBase):
     def __init__(self, left, right, optargs={}):
-        assert(isinstance(right, MakeArray))
+        assert (isinstance(right, MakeArray))
         self.left = left
         self.right = right
         self.optargs = optargs
@@ -797,7 +797,7 @@ class IndexRename(Ternary):
 
 class IndexDrop(BinExp):
     def do_run(self, sequence, index_name, arg, scope):
-        assert(isinstance(self.left, RTable))
+        assert (isinstance(self.left, RTable))
         current_db = self.find_db_scope()
         current_table = self.find_table_scope()
 
@@ -810,7 +810,7 @@ class IndexDrop(BinExp):
 
 class IndexList(MonExp):
     def do_run(self, table, arg, scope):
-        assert(isinstance(self.left, RTable))
+        assert (isinstance(self.left, RTable))
 
         current_db = self.find_db_scope()
         current_table = self.find_table_scope()
@@ -822,13 +822,13 @@ class IndexList(MonExp):
 
 class IndexWaitAll(MonExp):
     def do_run(self, table, arg, scope):
-        assert(isinstance(self.left, RTable))
+        assert (isinstance(self.left, RTable))
         return table
 
 
 class IndexWaitOne(BinExp):
     def do_run(self, table, index_name, arg, scope):
-        assert(isinstance(self.left, RTable))
+        assert (isinstance(self.left, RTable))
         current_db = self.find_db_scope()
         current_table = self.find_table_scope()
         exists = arg.index_exists_in_table_in_db(
@@ -836,13 +836,13 @@ class IndexWaitOne(BinExp):
             current_table,
             index_name
         )
-        assert(exists)
+        assert (exists)
         return table
 
 
 class Sync(MonExp):
     def do_run(self, table, arg, scope):
-        assert(isinstance(self.left, RTable))
+        assert (isinstance(self.left, RTable))
         return table
 
 

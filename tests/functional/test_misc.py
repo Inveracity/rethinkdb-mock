@@ -128,7 +128,7 @@ class TestMapping(MockTest):
             ).run(conn)
         except RqlRuntimeError as e:
             err = e
-        assert(isinstance(err, RqlRuntimeError))
+        assert (isinstance(err, RqlRuntimeError))
 
 
 class TestBracket(MockTest):
@@ -498,4 +498,4 @@ class TestError(MockTest):
         except RqlRuntimeError as err:
             rql_err = err
             assertEqual('msg', err.message)
-        assert(isinstance(rql_err, RqlRuntimeError))
+        assert (isinstance(rql_err, RqlRuntimeError))

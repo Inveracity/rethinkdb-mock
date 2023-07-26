@@ -132,7 +132,7 @@ class TestTime(MockTest):
         assertEqual(2014, update_time.year)
         assertEqual(6, update_time.month)
         assertEqual(10, update_time.day)
-        assert(isinstance(update_time.tzinfo, RqlTzinfo))
+        assert (isinstance(update_time.tzinfo, RqlTzinfo))
 
     def test_time_year_month_day_hour_minute_second_tz(self, conn):
         r.db('unimportant').table('very').update({
@@ -147,7 +147,7 @@ class TestTime(MockTest):
         assertEqual(15, update_time.hour)
         assertEqual(30, update_time.minute)
         assertEqual(45, update_time.second)
-        assert(isinstance(update_time.tzinfo, RqlTzinfo))
+        assert (isinstance(update_time.tzinfo, RqlTzinfo))
 
     def test_error_with_less_than_4_args(self, conn):
         try:
@@ -156,7 +156,7 @@ class TestTime(MockTest):
             }).run(conn)
         except RqlCompileError as e:
             err = e
-        assert('expected between 4 and 7' in err.message.lower())
+        assert ('expected between 4 and 7' in err.message.lower())
 
     def test_error_with_no_timezone(self, conn):
         date = datetime.datetime(2014, 3, 24, 12)
@@ -166,8 +166,8 @@ class TestTime(MockTest):
             }).run(conn)
         except ReqlDriverCompileError as e:
             err = e
-        assert('datetime' in err.message.lower())
-        assert('timezone' in err.message.lower())
+        assert ('datetime' in err.message.lower())
+        assert ('timezone' in err.message.lower())
 
 
 class TestDuring(MockTest):
