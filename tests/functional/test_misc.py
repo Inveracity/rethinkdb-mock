@@ -1,4 +1,5 @@
 from rethinkdb import r
+from rethinkdb.errors import ReqlNonExistenceError
 from rethinkdb.errors import RqlRuntimeError
 from tests.common import as_db_and_table
 from tests.common import assertEqual
@@ -398,6 +399,32 @@ class TestReduce(MockTest):
             .run(conn)
         )
         assertEqual(expected, result)
+
+    def test_reduce_one(self, conn):
+        expected = {"count": 1}
+        result = (
+            r.expr([{"count": 1}])
+            .reduce(
+                lambda left, right: {
+                    "count": left["count"] + right["count"],
+                }
+            )
+            .run(conn)
+        )
+        assertEqual(expected, result)
+
+    def test_reduce_errors(self, conn):
+        err = None
+        try:
+            r.expr([]).reduce(
+                lambda left, right: {
+                    "count": left["count"] + right["count"],
+                }
+            ).run(conn)
+        except ReqlNonExistenceError as e:
+            err = e
+
+        assert isinstance(err, ReqlNonExistenceError)
 
 
 class TestBranch(MockTest):

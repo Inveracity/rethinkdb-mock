@@ -8,6 +8,7 @@ import dateutil.parser
 from future.utils import iteritems
 from future.utils import text_type
 from past.utils import old_div
+from rethinkdb.errors import ReqlNonExistenceError
 
 from rethinkdb_mock import ast_base
 from rethinkdb_mock import joins
@@ -256,6 +257,12 @@ class Or(BinOp):
 
 class Reduce(ByFuncBase):
     def do_run(self, sequence, reduce_fn, arg, scope):
+        if len(sequence) == 0:
+            raise ReqlNonExistenceError("Cannot reduce over an empty stream")
+
+        if len(sequence) == 1:
+            return sequence[0]
+
         first, second = sequence[0:2]
         result = reduce_fn([first, second])
         for elem in sequence[2:]:
