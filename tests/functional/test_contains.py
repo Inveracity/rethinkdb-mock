@@ -79,3 +79,13 @@ class TestContains(MockTest):
             lambda doc: doc['id'] == 'tara-muse-id'
         ).run(conn)
         assertEqual(False, result)
+
+    def test_contains_lambda(self, conn):
+        expected = [
+            {'id': 'bob-id', 'age': 32, 'nums': [5, 7]},
+            {'id': 'sam-id', 'age': 45},
+        ]
+        result = r.db('d').table('people').filter(
+            lambda doc: r.expr(['non_existent', 'sam-id', 'bob-id']).contains(doc['id'])
+        ).run(conn)
+        assertEqual(expected, list(result))

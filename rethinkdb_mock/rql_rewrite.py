@@ -110,9 +110,9 @@ def handle_n_ary(arity_type_map, node):
 def makearray_of_datums(datum_list):
     out = []
     for elem in datum_list:
-        expected_types = (r_ast.Datum, r_ast.Asc, r_ast.Desc, r_ast.Func, r_ast.MakeArray, r_ast.MakeObj)
+        expected_types = (r_ast.Datum, r_ast.Asc, r_ast.Desc, r_ast.Func, r_ast.MakeArray, r_ast.MakeObj, r_ast.Bracket)
         if elem.__class__ not in expected_types:
-            raise TypeError(f'unexpected elem type: {elem}')
+            raise TypeError(f'unexpected elem type: {elem.__class__}')
         out.append(type_dispatch(elem))
     return mt_ast.MakeArray(out)
 
