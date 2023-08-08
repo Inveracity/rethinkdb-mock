@@ -12,7 +12,6 @@ def rewrite_query(query):
 
 
 RQL_TYPE_HANDLERS = {}
-RQL_TYPE_TRANSLATIONS = {}
 
 
 def type_dispatch(rql_node):
@@ -338,35 +337,27 @@ NORMAL_AGGREGATIONS = {
 
 for r_type, mt_type in iteritems(NORMAL_ZEROPS):
     RQL_TYPE_HANDLERS[r_type] = handle_generic_zerop(mt_type)
-    RQL_TYPE_TRANSLATIONS[r_type] = mt_type
 
 for r_type, mt_type in iteritems(NORMAL_MONOPS):
     RQL_TYPE_HANDLERS[r_type] = handle_generic_monop(mt_type)
-    RQL_TYPE_TRANSLATIONS[r_type] = mt_type
 
 for r_type, mt_type in iteritems(NORMAL_BINOPS):
     RQL_TYPE_HANDLERS[r_type] = handle_generic_binop(mt_type)
-    RQL_TYPE_TRANSLATIONS[r_type] = mt_type
 
 for r_type, arg_2_map in iteritems(BINOPS_BY_ARG_2_TYPE):
     RQL_TYPE_HANDLERS[r_type] = handle_generic_binop_poly_2(arg_2_map)
-    RQL_TYPE_TRANSLATIONS[r_type] = mt_type
 
 for r_type, mt_type in iteritems(SPLATTED_BINOPS):
     RQL_TYPE_HANDLERS[r_type] = binop_splat(mt_type)
-    RQL_TYPE_TRANSLATIONS[r_type] = mt_type
 
 for r_type, mt_type in iteritems(NORMAL_TERNOPS):
     RQL_TYPE_HANDLERS[r_type] = handle_generic_ternop(mt_type)
-    RQL_TYPE_TRANSLATIONS[r_type] = mt_type
 
 for r_type, mt_type in iteritems(OPS_BY_ARITY):
     RQL_TYPE_HANDLERS[r_type] = handle_n_ary(mt_type)
-    RQL_TYPE_TRANSLATIONS[r_type] = mt_type
 
 for r_type, type_map in iteritems(NORMAL_AGGREGATIONS):
     RQL_TYPE_HANDLERS[r_type] = handle_generic_aggregation(type_map)
-    RQL_TYPE_TRANSLATIONS[r_type] = mt_type
 
 
 @handles_type(r_ast.Datum)

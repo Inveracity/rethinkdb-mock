@@ -114,3 +114,43 @@ class TestDbMod(MockTest):
     def db_list(self, conn):
         # rethinkdb is special and always present; we don't care, for these tests
         return set(r.db_list().run(conn)) - {'rethinkdb'}
+
+
+class TestDbDefault(MockTest):
+    @staticmethod
+    def get_data():
+        return {
+            'dbs': {
+                'db_one': {
+                    'tables': {
+                        'one_x': [{
+                            "id": "x",
+                        }],
+                        'one_y': [{
+                            "id": "y",
+                            "one_x_id": "x",
+                            "content": "value"
+                        }]
+                    }
+                },
+                'db_two': {
+                    'tables': {
+                        'two_x': [],
+                        'two_y': []
+                    }
+                }
+            },
+            'default': 'db_one'
+        }
+
+    def test_db_default(self, conn):
+        expected = {"id": "x"}
+        result = r.table('one_x').get('x').run(conn)
+        assertEqual(expected, result)
+
+    def test_db_default_nested(self, conn):
+        expected = {'id': 'x', 'content': 'value'}
+        result = r.table('one_x').get('x').merge(
+            lambda doc: r.table('one_y').filter({"one_x_id": doc['id']}).pluck(["content"])[0]
+        ).run(conn)
+        assertEqual(expected, result)

@@ -3,12 +3,11 @@ from pprint import pprint
 
 from future.utils import iteritems
 import rethinkdb
+import rethinkdb.ast as r_ast
 
 from . import rtime
 from . import util
-from .ast_base import BinExp
 from .rql_rewrite import rewrite_query
-from .rql_rewrite import RQL_TYPE_TRANSLATIONS
 from .scope import Scope
 
 
@@ -200,9 +199,9 @@ class MockDbData(object):
 
 
 class MockDb(object):
-    def __init__(self, dbs_by_name, defaultDB = None):
+    def __init__(self, dbs_by_name, default_db=None):
         self.dbs_by_name = dbs_by_name
-        self.defaultDB = defaultDB
+        self.default_db = default_db
 
     def get_db(self, db_name):
         return self.dbs_by_name[db_name]
@@ -211,7 +210,7 @@ class MockDb(object):
         assert (isinstance(db_data_instance, MockDbData))
         dbs_by_name = util.obj_clone(self.dbs_by_name)
         dbs_by_name[db_name] = db_data_instance
-        return MockDb(dbs_by_name, self.defaultDB)
+        return MockDb(dbs_by_name, self.default_db)
 
     def create_table_in_db(self, db_name, table_name):
         new_db = self.get_db(db_name)
@@ -230,7 +229,7 @@ class MockDb(object):
         return self.set_db(db_name, MockDbData({}))
 
     def drop_db(self, db_name):
-        return MockDb(util.without([db_name], self.dbs_by_name), self.defaultDB)
+        return MockDb(util.without([db_name], self.dbs_by_name), self.default_db)
 
     def list_dbs(self):
         return list(self.dbs_by_name.keys())
@@ -303,23 +302,40 @@ def objects_from_pods(data):
             )
         dbs_by_name[db_name] = MockDbData(tables_by_name)
 
-    defaultDB = None
+    default_db = None
     if 'default' in data:
-        defaultDB = data['default']
+        default_db = data['default']
 
-    return MockDb(dbs_by_name, defaultDB)
+    return MockDb(dbs_by_name, default_db)
+
 
 def set_default_db(query, name):
-    if len(query._args) > 0:
-        if not (query._args[0].__class__ in RQL_TYPE_TRANSLATIONS and issubclass(RQL_TYPE_TRANSLATIONS[query._args[0].__class__], BinExp)):
+    NEEDS_DB_AST = [
+        r_ast.TableListTL.term_type,
+        r_ast.TableList.term_type,
+        r_ast.TableCreate.term_type,
+        r_ast.TableDrop.term_type,
+        r_ast.Table.term_type,
+    ]
+
+    if hasattr(query, "_args"):
+        for arg in query._args:
+            if isinstance(arg, r_ast.MakeArray):
+                for arr_arg in arg._args:
+                    set_default_db(arr_arg, name)
+
+            elif isinstance(arg, r_ast.MakeObj):
+                for obj_arg in arg.optargs.values():
+                    set_default_db(obj_arg, name)
+
+            else:
+                set_default_db(arg, name)
+
+    if hasattr(query, "term_type") and query.term_type in NEEDS_DB_AST:
+        # We already have the DB
+        if len(query._args) != 2:
             query._args = [rethinkdb.ast.DB(name)] + query._args
 
-        else:
-            set_default_db(query._args[0], name)
-
-    else:
-        if query.__class__ in RQL_TYPE_TRANSLATIONS and issubclass(RQL_TYPE_TRANSLATIONS[query.__class__], BinExp):
-            query._args = [rethinkdb.ast.DB(name)]
 
 class MockThinkConn(object):
     def __init__(self, rethinkdb_mock_parent):
@@ -329,8 +345,8 @@ class MockThinkConn(object):
         self.rethinkdb_mock_parent._modify_initial_data(data)
 
     def _start(self, rql_query, **global_optargs):
-        if self.rethinkdb_mock_parent.data.defaultDB:
-            set_default_db(rql_query, self.rethinkdb_mock_parent.data.defaultDB)
+        if self.rethinkdb_mock_parent.data.default_db:
+            set_default_db(rql_query, self.rethinkdb_mock_parent.data.default_db)
 
         return self.rethinkdb_mock_parent.run_query(rewrite_query(rql_query))
 
