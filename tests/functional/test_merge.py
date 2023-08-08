@@ -1,5 +1,4 @@
 from rethinkdb import r
-from tests.common import as_db_and_table
 from tests.common import assertEqUnordered
 from tests.functional.common import MockTest
 
@@ -10,6 +9,7 @@ class TestMerge(MockTest):
         data = [
             {
                 'id': 'id-1',
+                'extra_id': 'extra-id-1',
                 'x': {
                     'x-val': 'x-val-1'
                 },
@@ -27,12 +27,31 @@ class TestMerge(MockTest):
                 }
             }
         ]
-        return as_db_and_table('jezebel', 'things', data)
+        data2 = [
+            {
+                'id': 'extra-id-1',
+                'extra_info': {
+                    'key': 'value'
+                }
+            }
+        ]
+
+        return {
+            'dbs': {
+                'jezebel': {
+                    'tables': {
+                        'things': data,
+                        'extra_things': data2,
+                    }
+                }
+            }
+        }
 
     def test_merge_toplevel(self, conn):
         expected = [
             {
                 'id': 'id-1',
+                'extra_id': 'extra-id-1',
                 'x': {
                     'x-val': 'x-val-1'
                 },
@@ -106,3 +125,22 @@ class TestMerge(MockTest):
             lambda d: d['x'].merge({'nested': d['y']})
         ).run(conn)
         assertEqUnordered(expected, list(result))
+
+    def test_merge_wihtout_map(self, conn):
+        expected = {
+            'id': 'id-1',
+            'extra_id': 'extra-id-1',
+            'x': {
+                'x-val': 'x-val-1'
+            },
+            'y': {
+                'y-val': 'y-val-1'
+            },
+            'extra': {
+                'key': 'value'
+            },
+        }
+        result = r.db('jezebel').table('things').get('id-1').merge(lambda t: {
+            'extra': r.db('jezebel').table('extra_things').get(t['extra_id'])["extra_info"]
+        }).run(conn)
+        assertEqUnordered(expected, result)

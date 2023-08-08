@@ -6,9 +6,10 @@ import rethinkdb
 
 from . import rtime
 from . import util
-from .rql_rewrite import rewrite_query, RQL_TYPE_TRANSLATIONS
-from .scope import Scope
 from .ast_base import BinExp
+from .rql_rewrite import rewrite_query
+from .rql_rewrite import RQL_TYPE_TRANSLATIONS
+from .scope import Scope
 
 
 def fill_missing_report_results(report):

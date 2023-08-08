@@ -207,7 +207,7 @@ NORMAL_BINOPS = {
     r_ast.Get: mt_ast.Get,
     r_ast.Map: mt_ast.MapWithRFunc,
     r_ast.Replace: mt_ast.Replace,
-    r_ast.Merge: mt_ast.MergePoly,
+    r_ast.Merge: mt_ast.MergePolyWithRFunc,
     r_ast.Append: mt_ast.Append,
     r_ast.Prepend: mt_ast.Prepend,
     r_ast.Union: mt_ast.Union,

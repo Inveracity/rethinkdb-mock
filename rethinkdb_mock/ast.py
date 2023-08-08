@@ -397,14 +397,19 @@ class PluckPoly(BinExp):
         return util.maybe_map(util.pluck_with(attrs), left)
 
 
-class MergePoly(BinExp):
-    def do_run(self, left, ext_with, arg, scope):
-        if ast_base.is_literal(ext_with):
-            self.raise_rql_runtime_error('invalid top-level r.literal()')
-        elif ast_base.has_nested_literal(ext_with):
-            self.raise_rql_runtime_error('invalid nested r.literal()')
+class MergePolyWithRFunc(ByFuncBase):
+    def do_run(self, sequence, map_fn, arg, scope):
+        def mapper(doc):
+            ext_with = map_fn(doc)
 
-        return util.maybe_map(ast_base.rql_merge_with(ext_with), left)
+            if ast_base.is_literal(ext_with):
+                self.raise_rql_runtime_error('invalid top-level r.literal()')
+            elif ast_base.has_nested_literal(ext_with):
+                self.raise_rql_runtime_error('invalid nested r.literal()')
+
+            return ast_base.rql_merge_with(ext_with, doc)
+
+        return util.maybe_map(mapper, sequence)
 
 
 class HasFields(BinExp):
