@@ -17,18 +17,18 @@ def day_of_year(dt):
 
 
 def make_time(year, month, day, hour=0, minute=0, second=0, timezone=None):
-    timezone = timezone or rethinkdb.r.make_timezone('00:00')
+    timezone = timezone or rethinkdb.r.make_timezone("00:00")
     return datetime.datetime(year, month, day, hour, minute, second, tzinfo=timezone)
 
 
 def now():
     dtime = datetime.datetime.now()
-    return dtime.replace(tzinfo=rethinkdb.r.make_timezone('00:00'))
+    return dtime.replace(tzinfo=rethinkdb.r.make_timezone("00:00"))
 
 
 def create_rql_timezone(timezone_string):
-    if timezone_string == 'Z':
-        return rethinkdb.r.make_timezone('00:00')
+    if timezone_string == "Z":
+        return rethinkdb.r.make_timezone("00:00")
     else:
         raise NotImplementedError
 

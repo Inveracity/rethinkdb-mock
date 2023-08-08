@@ -11,7 +11,9 @@ def curry2(func):
 
         def out2(y):
             return func(x, y)
+
         return out2
+
     return out
 
 
@@ -23,6 +25,7 @@ def curry3(func):
             return func(x, *args)
         else:
             return curry2(lambda a, b: func(x, a, b))(args[0])
+
     return out
 
 
@@ -209,6 +212,7 @@ def pipeline(*funcs):
         for f in funcs:
             result = f(result)
         return result
+
     return out
 
 
@@ -232,24 +236,30 @@ def pluck_extended(query: dict, data, path=None):
     # If query is a list, do a recursive search
     if isinstance(query, list):
         return {
-            k: v for subresult in [pluck_extended(subquery, data, path) for subquery in query] for k, v in subresult.items()
+            k: v
+            for subresult in [
+                pluck_extended(subquery, data, path) for subquery in query
+            ]
+            for k, v in subresult.items()
         }
 
     # If query is a dict, do a recursive search continuing down this path
     if isinstance(query, dict):
         return {
-            subkey: pluck_extended(subquery, data, path + [subkey]) for subkey, subquery in query.items()
+            subkey: pluck_extended(subquery, data, path + [subkey])
+            for subkey, subquery in query.items()
         }
 
 
 def pluck_with(attrs):
     def inner_pluck(thing):
         return pluck_extended(attrs, thing)
+
     return inner_pluck
 
 
 def get_by_id(id):
-    return find_first(match_attr('id', id))
+    return find_first(match_attr("id", id))
 
 
 def as_obj(pairs):
@@ -270,7 +280,7 @@ def obj_clone(a_dict):
 
 
 def is_iterable(x):
-    return hasattr(x, '__iter__')
+    return hasattr(x, "__iter__")
 
 
 @curry2
@@ -355,11 +365,9 @@ def rql_str_split(string, split_on, limit=-1):
 
 def sort_by_one(sort_key, sequence, reverse=False):
     out = clone_array(sequence)
-    kwargs = {
-        'key': lambda doc: getter(sort_key, doc)
-    }
+    kwargs = {"key": lambda doc: getter(sort_key, doc)}
     if reverse:
-        kwargs['reverse'] = True
+        kwargs["reverse"] = True
     out.sort(**kwargs)
     return out
 
@@ -371,7 +379,9 @@ def sort_by_many(keys_and_dirs, sequence):
     # this probably isn't all that efficient, but
     # we can figure that out later.
     key_for_pass = keys_and_dirs[0]
-    current_pass = sort_by_one(key_for_pass[0], sequence, reverse=(key_for_pass[1] == 'DESC'))
+    current_pass = sort_by_one(
+        key_for_pass[0], sequence, reverse=(key_for_pass[1] == "DESC")
+    )
     if len(keys_and_dirs) == 1:
         return current_pass
     else:
@@ -381,6 +391,7 @@ def sort_by_many(keys_and_dirs, sequence):
 
         def handle_chunk():
             result.extend(sort_by_many(keys_and_dirs[1:], chunk))
+
         for elem in current_pass:
             next_key = getter(key_for_pass[0], elem)
             if next_key != current_key:
@@ -448,7 +459,7 @@ class DictableSet(set):
         super(DictableSet, self).add(elem)
 
     def has(self, elem):
-        return (make_hashable(elem) in self)
+        return make_hashable(elem) in self
 
 
 def dictable_distinct(sequence):

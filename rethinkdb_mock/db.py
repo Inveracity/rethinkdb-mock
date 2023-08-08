@@ -12,89 +12,69 @@ from .scope import Scope
 
 
 def fill_missing_report_results(report):
-    defaults = {
-        'errors': 0,
-        'replaced': 0,
-        'inserted': 0,
-        'deleted': 0,
-        'changes': []
-    }
+    defaults = {"errors": 0, "replaced": 0, "inserted": 0, "deleted": 0, "changes": []}
     return util.extend(defaults, report)
 
 
 def replace_array_elems_by_id(existing, replace_with):
-    report = {
-        'replaced': 0,
-        'changes': []
-    }
+    report = {"replaced": 0, "changes": []}
     elem_index_by_id = {}
     for index in range(0, len(existing)):
         elem = existing[index]
-        elem_index_by_id[util.getter('id')(elem)] = index
+        elem_index_by_id[util.getter("id")(elem)] = index
 
     to_return = util.clone_array(existing)
 
     for elem in replace_with:
-        index = elem_index_by_id[util.getter('id')(elem)]
-        change = {
-            'old_val': existing[index],
-            'new_val': elem
-        }
-        report['changes'].append(change)
-        report['replaced'] += 1
+        index = elem_index_by_id[util.getter("id")(elem)]
+        change = {"old_val": existing[index], "new_val": elem}
+        report["changes"].append(change)
+        report["replaced"] += 1
         to_return[index] = elem
 
     return to_return, fill_missing_report_results(report)
 
 
 def remove_array_elems_by_id(existing, to_remove):
-    report = {
-        'deleted': 0,
-        'changes': []
-    }
+    report = {"deleted": 0, "changes": []}
     result = util.clone_array(existing)
     for elem in to_remove:
         if elem in result:
-            report['deleted'] += 1
-            report['changes'].append({'old_val': elem, 'new_val': None})
+            report["deleted"] += 1
+            report["changes"].append({"old_val": elem, "new_val": None})
             result.remove(elem)
     return result, report
 
 
 def insert_into_table_with_conflict_setting(existing, to_insert, conflict):
-    assert (conflict in ('error', 'update', 'replace'))
-    existing_by_id = {row['id']: row for row in existing}
+    assert conflict in ("error", "update", "replace")
+    existing_by_id = {row["id"]: row for row in existing}
     seen = set([])
     result = []
-    result_report = {
-        'errors': 0,
-        'inserted': 0,
-        'replaced': 0,
-        'changes': []
-    }
+    result_report = {"errors": 0, "inserted": 0, "replaced": 0, "changes": []}
     for doc in to_insert:
         change = {}
-        if doc['id'] in existing_by_id:
-            existing_row = existing_by_id[doc['id']]
-            change['old_val'] = existing_row
-            if conflict == 'error':
-                result_report['errors'] += 1
+        if doc["id"] in existing_by_id:
+            existing_row = existing_by_id[doc["id"]]
+            change["old_val"] = existing_row
+            if conflict == "error":
+                result_report["errors"] += 1
                 continue
-            elif conflict == 'update':
+            elif conflict == "update":
                 result_row = util.extend(existing_row, doc)
-            elif conflict == 'replace':
+            elif conflict == "replace":
                 result_row = doc
-            result_report['replaced'] += 1
-            seen.add(doc['id'])
+            result_report["replaced"] += 1
+            seen.add(doc["id"])
         else:
-            change['old_val'] = None
-            result_report['inserted'] += 1
+            change["old_val"] = None
+            result_report["inserted"] += 1
             result_row = doc
         result.append(result_row)
-        change['new_val'] = result_row
-        result_report['changes'].append(change)
+        change["new_val"] = result_row
+        result_report["changes"].append(change)
 
-    not_updated = [row for row in existing if row['id'] not in seen]
+    not_updated = [row for row in existing if row["id"] not in seen]
     result = not_updated + result
     return result, fill_missing_report_results(result_report)
 
@@ -115,10 +95,12 @@ class MockTableData(object):
         return MockTableData(self.name, new_data, self.indexes), report
 
     def insert(self, new_rows, conflict):
-        assert (conflict in ('error', 'update', 'replace'))
+        assert conflict in ("error", "update", "replace")
         if not isinstance(new_rows, list):
             new_rows = [new_rows]
-        new_data, report = insert_into_table_with_conflict_setting(self.rows, new_rows, conflict)
+        new_data, report = insert_into_table_with_conflict_setting(
+            self.rows, new_rows, conflict
+        )
         return MockTableData(self.name, new_data, self.indexes), report
 
     def remove_by_id(self, to_remove):
@@ -131,11 +113,10 @@ class MockTableData(object):
         return self.rows
 
     def create_index(self, index_name, index_func, multi=False):
-        to_add = {
-            'func': index_func,
-            'multi': multi
-        }
-        return MockTableData(self.name, self.rows, util.extend(self.indexes, {index_name: to_add}))
+        to_add = {"func": index_func, "multi": multi}
+        return MockTableData(
+            self.name, self.rows, util.extend(self.indexes, {index_name: to_add})
+        )
 
     def rename_index(self, old_name, new_name):
         new_indexes = util.without([old_name], self.indexes)
@@ -155,14 +136,14 @@ class MockTableData(object):
     def _index_values(self, index_name):
         func = self.get_index_func(index_name)
         out = [func(elem) for elem in self.rows]
-        pprint({'func': func, 'out': out})
+        pprint({"func": func, "out": out})
         return out
 
     def get_index_func(self, index):
-        return self.indexes[index].get('func')
+        return self.indexes[index].get("func")
 
     def is_multi_index(self, index):
-        return self.indexes[index].get('multi', False)
+        return self.indexes[index].get("multi", False)
 
     def __iter__(self):
         for elem in self.rows:
@@ -192,7 +173,7 @@ class MockDbData(object):
         return self.tables_by_name[table_name]
 
     def set_table(self, table_name, new_table_instance):
-        assert (isinstance(new_table_instance, MockTableData))
+        assert isinstance(new_table_instance, MockTableData)
         tables = util.obj_clone(self.tables_by_name)
         tables[table_name] = new_table_instance
         return MockDbData(tables)
@@ -207,7 +188,7 @@ class MockDb(object):
         return self.dbs_by_name[db_name]
 
     def set_db(self, db_name, db_data_instance):
-        assert (isinstance(db_data_instance, MockDbData))
+        assert isinstance(db_data_instance, MockDbData)
         dbs_by_name = util.obj_clone(self.dbs_by_name)
         dbs_by_name[db_name] = db_data_instance
         return MockDb(dbs_by_name, self.default_db)
@@ -235,18 +216,22 @@ class MockDb(object):
         return list(self.dbs_by_name.keys())
 
     def replace_table_in_db(self, db_name, table_name, table_data_instance):
-        assert (isinstance(table_data_instance, MockTableData))
+        assert isinstance(table_data_instance, MockTableData)
         db = self.get_db(db_name)
         new_db = db.set_table(table_name, table_data_instance)
         return self.set_db(db_name, new_db)
 
     def insert_into_table_in_db(self, db_name, table_name, elem_list, conflict):
-        assert (conflict in ('error', 'update', 'replace'))
-        new_table_data, report = self.get_db(db_name).get_table(table_name).insert(elem_list, conflict)
+        assert conflict in ("error", "update", "replace")
+        new_table_data, report = (
+            self.get_db(db_name).get_table(table_name).insert(elem_list, conflict)
+        )
         return self._replace_table(db_name, table_name, new_table_data), report
 
     def update_by_id_in_table_in_db(self, db_name, table_name, elem_list):
-        new_table_data, report = self.get_db(db_name).get_table(table_name).update_by_id(elem_list)
+        new_table_data, report = (
+            self.get_db(db_name).get_table(table_name).update_by_id(elem_list)
+        )
         return self._replace_table(db_name, table_name, new_table_data), report
 
     def _replace_table(self, db_name, table_name, new_table_data):
@@ -254,21 +239,35 @@ class MockDb(object):
         return self.set_db(db_name, new_db)
 
     def remove_by_id_in_table_in_db(self, db_name, table_name, elem_list):
-        new_table_data, report = self.get_db(db_name).get_table(table_name).remove_by_id(elem_list)
+        new_table_data, report = (
+            self.get_db(db_name).get_table(table_name).remove_by_id(elem_list)
+        )
         return self._replace_table(db_name, table_name, new_table_data), report
 
-    def create_index_in_table_in_db(self, db_name, table_name, index_name, index_func, multi=False):
-        new_table_data = self.get_db(db_name)\
-            .get_table(table_name)\
+    def create_index_in_table_in_db(
+        self, db_name, table_name, index_name, index_func, multi=False
+    ):
+        new_table_data = (
+            self.get_db(db_name)
+            .get_table(table_name)
             .create_index(index_name, index_func, multi=multi)
+        )
         return self._replace_table(db_name, table_name, new_table_data)
 
     def drop_index_in_table_in_db(self, db_name, table_name, index_name):
-        new_table_data = self.get_db(db_name).get_table(table_name).drop_index(index_name)
+        new_table_data = (
+            self.get_db(db_name).get_table(table_name).drop_index(index_name)
+        )
         return self._replace_table(db_name, table_name, new_table_data)
 
-    def rename_index_in_table_in_db(self, db_name, table_name, old_index_name, new_index_name):
-        new_table_data = self.get_db(db_name).get_table(table_name).rename_index(old_index_name, new_index_name)
+    def rename_index_in_table_in_db(
+        self, db_name, table_name, old_index_name, new_index_name
+    ):
+        new_table_data = (
+            self.get_db(db_name)
+            .get_table(table_name)
+            .rename_index(old_index_name, new_index_name)
+        )
         return self._replace_table(db_name, table_name, new_table_data)
 
     def list_indexes_in_table_in_db(self, db_name, table_name):
@@ -289,22 +288,20 @@ class MockDb(object):
 
 def objects_from_pods(data):
     dbs_by_name = {}
-    for db_name, db_data in iteritems(data['dbs']):
+    for db_name, db_data in iteritems(data["dbs"]):
         tables_by_name = {}
-        for table_name, table_data in iteritems(db_data['tables']):
+        for table_name, table_data in iteritems(db_data["tables"]):
             if isinstance(table_data, list):
                 indexes = {}
             else:
-                indexes = table_data.get('indexes', {})
-                table_data = table_data.get('rows', [])
-            tables_by_name[table_name] = MockTableData(
-                table_name, table_data, indexes
-            )
+                indexes = table_data.get("indexes", {})
+                table_data = table_data.get("rows", [])
+            tables_by_name[table_name] = MockTableData(table_name, table_data, indexes)
         dbs_by_name[db_name] = MockDbData(tables_by_name)
 
     default_db = None
-    if 'default' in data:
-        default_db = data['default']
+    if "default" in data:
+        default_db = data["default"]
 
     return MockDb(dbs_by_name, default_db)
 
@@ -360,7 +357,7 @@ class MockThinkConn(object):
 class MockThink(object):
     def __init__(self, initial_data):
         self._modify_initial_data(initial_data)
-        self.tzinfo = rethinkdb.r.make_timezone('00:00')
+        self.tzinfo = rethinkdb.r.make_timezone("00:00")
 
     def _modify_initial_data(self, new_data):
         self.initial_data = new_data
@@ -373,7 +370,7 @@ class MockThink(object):
         # so it should have the same result each time within that query.
         # But we don't do anything if now_time has already been set.
 
-        if not hasattr(self, 'now_time'):
+        if not hasattr(self, "now_time"):
             temp_now_time = True
             self.now_time = self.get_now_time()
 
@@ -390,7 +387,7 @@ class MockThink(object):
             result = result.get_rows()
 
         if temp_now_time:
-            delattr(self, 'now_time')
+            delattr(self, "now_time")
         return result
 
     def pprint_query_ast(self, query):
@@ -409,7 +406,7 @@ class MockThink(object):
         self.now_time = dtime
 
     def get_now_time(self):
-        if hasattr(self, 'now_time'):
+        if hasattr(self, "now_time"):
             return self.now_time
         else:
             return rtime.now()

@@ -15,7 +15,7 @@ class Scope(object):
         result = None
         if x in self.values:
             result = self.values[x]
-        elif hasattr(self, 'parent'):
+        elif hasattr(self, "parent"):
             result = self.parent.get_sym(x)
         if result is None:
             msg = f"symbol not defined: {x}"
@@ -29,7 +29,7 @@ class Scope(object):
 
     def get_flattened(self):
         vals = {k: v for k, v in list(self.values.items())}
-        if not hasattr(self, 'parent'):
+        if not hasattr(self, "parent"):
             return vals
         parent_vals = self.parent.get_flattened()
         parent_vals.update(vals)
