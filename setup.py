@@ -3,7 +3,7 @@ from setuptools import setup
 setup(
     name="rethinkdb_mock",
     zip_safe=True,
-    version="0.11.0-dev",
+    version='0.11.0-dev1',
     description="A pure-python in-memory mock of rethinkdb (formerly MockThink)",
     url="https://github.com/Inveracity/rethinkdb-mock",
     maintainer="Christopher Baklid",
