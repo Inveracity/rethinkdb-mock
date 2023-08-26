@@ -12,6 +12,7 @@ pytest = "*"
 pytest-cov = "*"
 pytest-server-fixtures = "*"
 exceptiongroup = "*"
+black="*"
 
 [packages]
 future = "*"
@@ -26,4 +27,4 @@ test = "pytest --cov rethinkdb_mock -vv"
 test_live = "pytest --cov rethinkdb_mock -vv -x --run rethink"
 last_live = "pytest --cov rethinkdb_mock -vv -x --run rethink --last-failed"
 isort = "isort ."
-lint = "flake8 ."
+lint = "black ."

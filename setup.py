@@ -8,9 +8,9 @@ setup(
     url="https://github.com/Inveracity/rethinkdb-mock",
     maintainer="Christopher Baklid",
     maintainer_email="cbaklid@gmail.com",
-    packages=['rethinkdb_mock'],
-    package_dir={'rethinkdb_mock': 'rethinkdb_mock'},
-    install_requires=['rethinkdb>=2.4.8', 'python-dateutil', 'future'],
+    packages=["rethinkdb_mock"],
+    package_dir={"rethinkdb_mock": "rethinkdb_mock"},
+    install_requires=["rethinkdb>=2.4.8", "python-dateutil", "future"],
     classifiers=[
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
@@ -22,7 +22,7 @@ setup(
         "Topic :: Database",
         "Topic :: Software Development :: Testing :: Mocking",
     ],
-    python_requires='>=3.8',
-    long_description=open('README.md').read(),
-    long_description_content_type='text/markdown',
+    python_requires=">=3.8",
+    long_description=open("README.md").read(),
+    long_description_content_type="text/markdown",
 )

@@ -12,7 +12,6 @@ def rewrite_query(query):
 
 
 RQL_TYPE_HANDLERS = {}
-RQL_TYPE_TRANSLATIONS = {}
 
 
 def type_dispatch(rql_node):
@@ -22,14 +21,15 @@ def type_dispatch(rql_node):
 @util.curry2
 def handles_type(rql_type, func):
     def handler(node):
-        assert (type(node) == rql_type)
+        assert type(node) == rql_type
         return func(node)
+
     RQL_TYPE_HANDLERS[rql_type] = handler
     return handler
 
 
 def process_optargs(node):
-    if hasattr(node, 'optargs') and node.optargs:
+    if hasattr(node, "optargs") and node.optargs:
         return {k: plain_val_of_datum(v) for k, v in iteritems(node.optargs)}
     return {}
 
@@ -49,7 +49,7 @@ def handle_generic_binop(Mt_Constructor, node):
     return Mt_Constructor(
         type_dispatch(node._args[0]),
         type_dispatch(node._args[1]),
-        optargs=process_optargs(node)
+        optargs=process_optargs(node),
     )
 
 
@@ -62,14 +62,16 @@ def handle_generic_binop_poly_2(mt_type_map, node):
     return Mt_Constructor(
         type_dispatch(node._args[0]),
         type_dispatch(node._args[1]),
-        optargs=process_optargs(node)
+        optargs=process_optargs(node),
     )
 
 
 @util.curry2
 def handle_generic_ternop(Mt_Constructor, node):
-    assert (len(node._args) == 3)
-    return Mt_Constructor(*[type_dispatch(arg) for arg in node._args], optargs=process_optargs(node))
+    assert len(node._args) == 3
+    return Mt_Constructor(
+        *[type_dispatch(arg) for arg in node._args], optargs=process_optargs(node)
+    )
 
 
 @util.curry2
@@ -77,19 +79,14 @@ def handle_generic_aggregation(mt_type_map, node):
     optargs = process_optargs(node)
     if len(node._args) == 1:
         Mt_Constructor = mt_type_map[1]
-        return Mt_Constructor(
-            type_dispatch(node._args[0]),
-            optargs=optargs
-        )
+        return Mt_Constructor(type_dispatch(node._args[0]), optargs=optargs)
     else:
         for r_type, m_type in iteritems(mt_type_map[2]):
             if isinstance(node._args[1], r_type):
                 Mt_Constructor = m_type
                 break
     return Mt_Constructor(
-        type_dispatch(node._args[0]),
-        type_dispatch(node._args[1]),
-        optargs=optargs
+        type_dispatch(node._args[0]), type_dispatch(node._args[1]), optargs=optargs
     )
 
 
@@ -97,7 +94,7 @@ GENERIC_BY_ARITY = {
     0: handle_generic_zerop,
     1: handle_generic_monop,
     2: handle_generic_binop,
-    3: handle_generic_ternop
+    3: handle_generic_ternop,
 }
 
 
@@ -110,9 +107,17 @@ def handle_n_ary(arity_type_map, node):
 def makearray_of_datums(datum_list):
     out = []
     for elem in datum_list:
-        expected_types = (r_ast.Datum, r_ast.Asc, r_ast.Desc, r_ast.Func, r_ast.MakeArray, r_ast.MakeObj)
+        expected_types = (
+            r_ast.Datum,
+            r_ast.Asc,
+            r_ast.Desc,
+            r_ast.Func,
+            r_ast.MakeArray,
+            r_ast.MakeObj,
+            r_ast.Bracket,
+        )
         if elem.__class__ not in expected_types:
-            raise TypeError(f'unexpected elem type: {elem}')
+            raise TypeError(f"unexpected elem type: {elem.__class__}")
         out.append(type_dispatch(elem))
     return mt_ast.MakeArray(out)
 
@@ -183,7 +188,7 @@ NORMAL_MONOPS = {
     r_ast.Literal: mt_ast.Literal,
     r_ast.Distinct: mt_ast.Distinct,
     r_ast.ISO8601: mt_ast.ISO8601,
-    r_ast.Wait: mt_ast.Wait
+    r_ast.Wait: mt_ast.Wait,
 }
 
 #   2-ary reql terms which don't need any special handling
@@ -207,7 +212,7 @@ NORMAL_BINOPS = {
     r_ast.Get: mt_ast.Get,
     r_ast.Map: mt_ast.MapWithRFunc,
     r_ast.Replace: mt_ast.Replace,
-    r_ast.Merge: mt_ast.MergePoly,
+    r_ast.Merge: mt_ast.MergePolyWithRFunc,
     r_ast.Append: mt_ast.Append,
     r_ast.Prepend: mt_ast.Prepend,
     r_ast.Union: mt_ast.Union,
@@ -223,7 +228,7 @@ NORMAL_BINOPS = {
     r_ast.TableDrop: mt_ast.TableDrop,
     r_ast.Default: mt_ast.RDefault,
     r_ast.CoerceTo: mt_ast.CoerceTo,
-    r_ast.Limit: mt_ast.Limit
+    r_ast.Limit: mt_ast.Limit,
 }
 
 
@@ -232,18 +237,15 @@ NORMAL_BINOPS = {
 #   at evaluation time, though we still need to branch on evaluate type of first argument
 #   in many cases.
 BINOPS_BY_ARG_2_TYPE = {
-    r_ast.Group: {
-        r_ast.Datum: mt_ast.GroupByField,
-        r_ast.Func: mt_ast.GroupByFunc
-    },
+    r_ast.Group: {r_ast.Datum: mt_ast.GroupByField, r_ast.Func: mt_ast.GroupByFunc},
     r_ast.Filter: {
         r_ast.MakeObj: mt_ast.FilterWithObj,
-        r_ast.Func: mt_ast.FilterWithFunc
+        r_ast.Func: mt_ast.FilterWithFunc,
     },
     r_ast.Update: {
         r_ast.MakeObj: mt_ast.UpdateWithObj,
-        r_ast.Func: mt_ast.UpdateByFunc
-    }
+        r_ast.Func: mt_ast.UpdateByFunc,
+    },
 }
 
 #   ReQL represents these as varargs functions, which can take an array as second arg or
@@ -260,7 +262,7 @@ SPLATTED_BINOPS = {
     r_ast.HasFields: mt_ast.HasFields,
     r_ast.Without: mt_ast.WithoutPoly,
     r_ast.GetAll: mt_ast.GetAll,
-    r_ast.DeleteAt: mt_ast.DeleteAt
+    r_ast.DeleteAt: mt_ast.DeleteAt,
 }
 
 #   3-ary reql terms which don't need any special handling
@@ -274,7 +276,7 @@ NORMAL_TERNOPS = {
     r_ast.Branch: mt_ast.Branch,
     r_ast.IndexRename: mt_ast.IndexRename,
     r_ast.Between: mt_ast.Between,
-    r_ast.During: mt_ast.During
+    r_ast.During: mt_ast.During,
 }
 
 #   We can determine a lot about these functions' behavior based on arg count.
@@ -284,89 +286,56 @@ OPS_BY_ARITY = {
     r_ast.Split: {
         1: mt_ast.StrSplitDefault,
         2: mt_ast.StrSplitOn,
-        3: mt_ast.StrSplitOnLimit
+        3: mt_ast.StrSplitOnLimit,
     },
-    r_ast.Random: {
-        0: mt_ast.Random0,
-        1: mt_ast.Random1,
-        2: mt_ast.Random2
-    },
-    r_ast.IndexCreate: {
-        2: mt_ast.IndexCreateByField,
-        3: mt_ast.IndexCreateByFunc
-    },
-    r_ast.IndexWait: {
-        1: mt_ast.IndexWaitAll,
-        2: mt_ast.IndexWaitOne
-    },
-    r_ast.UserError: {
-        0: mt_ast.RError0,
-        1: mt_ast.RError1
-    }
+    r_ast.Random: {0: mt_ast.Random0, 1: mt_ast.Random1, 2: mt_ast.Random2},
+    r_ast.IndexCreate: {2: mt_ast.IndexCreateByField, 3: mt_ast.IndexCreateByFunc},
+    r_ast.IndexWait: {1: mt_ast.IndexWaitAll, 2: mt_ast.IndexWaitOne},
+    r_ast.UserError: {0: mt_ast.RError0, 1: mt_ast.RError1},
 }
 
 NORMAL_AGGREGATIONS = {
     r_ast.Min: {
         1: mt_ast.Min1,
-        2: {
-            r_ast.Datum: mt_ast.MinByField,
-            r_ast.Func: mt_ast.MinByFunc
-        }
+        2: {r_ast.Datum: mt_ast.MinByField, r_ast.Func: mt_ast.MinByFunc},
     },
     r_ast.Max: {
         1: mt_ast.Max1,
-        2: {
-            r_ast.Datum: mt_ast.MaxByField,
-            r_ast.Func: mt_ast.MaxByFunc
-        }
+        2: {r_ast.Datum: mt_ast.MaxByField, r_ast.Func: mt_ast.MaxByFunc},
     },
     r_ast.Avg: {
         1: mt_ast.Avg1,
-        2: {
-            r_ast.Datum: mt_ast.AvgByField,
-            r_ast.Func: mt_ast.AvgByFunc
-        }
+        2: {r_ast.Datum: mt_ast.AvgByField, r_ast.Func: mt_ast.AvgByFunc},
     },
     r_ast.Sum: {
         1: mt_ast.Sum1,
-        2: {
-            r_ast.Datum: mt_ast.SumByField,
-            r_ast.Func: mt_ast.SumByFunc
-        }
-    }
+        2: {r_ast.Datum: mt_ast.SumByField, r_ast.Func: mt_ast.SumByFunc},
+    },
 }
 
 for r_type, mt_type in iteritems(NORMAL_ZEROPS):
     RQL_TYPE_HANDLERS[r_type] = handle_generic_zerop(mt_type)
-    RQL_TYPE_TRANSLATIONS[r_type] = mt_type
 
 for r_type, mt_type in iteritems(NORMAL_MONOPS):
     RQL_TYPE_HANDLERS[r_type] = handle_generic_monop(mt_type)
-    RQL_TYPE_TRANSLATIONS[r_type] = mt_type
 
 for r_type, mt_type in iteritems(NORMAL_BINOPS):
     RQL_TYPE_HANDLERS[r_type] = handle_generic_binop(mt_type)
-    RQL_TYPE_TRANSLATIONS[r_type] = mt_type
 
 for r_type, arg_2_map in iteritems(BINOPS_BY_ARG_2_TYPE):
     RQL_TYPE_HANDLERS[r_type] = handle_generic_binop_poly_2(arg_2_map)
-    RQL_TYPE_TRANSLATIONS[r_type] = mt_type
 
 for r_type, mt_type in iteritems(SPLATTED_BINOPS):
     RQL_TYPE_HANDLERS[r_type] = binop_splat(mt_type)
-    RQL_TYPE_TRANSLATIONS[r_type] = mt_type
 
 for r_type, mt_type in iteritems(NORMAL_TERNOPS):
     RQL_TYPE_HANDLERS[r_type] = handle_generic_ternop(mt_type)
-    RQL_TYPE_TRANSLATIONS[r_type] = mt_type
 
 for r_type, mt_type in iteritems(OPS_BY_ARITY):
     RQL_TYPE_HANDLERS[r_type] = handle_n_ary(mt_type)
-    RQL_TYPE_TRANSLATIONS[r_type] = mt_type
 
 for r_type, type_map in iteritems(NORMAL_AGGREGATIONS):
     RQL_TYPE_HANDLERS[r_type] = handle_generic_aggregation(type_map)
-    RQL_TYPE_TRANSLATIONS[r_type] = mt_type
 
 
 @handles_type(r_ast.Datum)
@@ -379,7 +348,7 @@ def plain_val_of_datum(datum_node):
 
 
 def plain_list_of_make_array(make_array_instance):
-    assert (isinstance(make_array_instance, r_ast.MakeArray))
+    assert isinstance(make_array_instance, r_ast.MakeArray)
     return list(map(plain_val_of_datum, make_array_instance._args))
 
 
@@ -413,7 +382,7 @@ def handle_order_by(node):
             right.append(mt_ast.Asc(type_dispatch(elem)))
         else:
             accepted = (r_ast.Desc, r_ast.Asc, r_ast.Func)
-            assert (elem.__class__ in accepted)
+            assert elem.__class__ in accepted
             right.append(type_dispatch(elem))
     if optargs.get("index"):
         right.append(mt_ast.Asc(type_dispatch(r_ast.Datum(optargs["index"]))))
@@ -430,13 +399,9 @@ def handle_offsets_of(node):
     left = type_dispatch(node._args[0])
     right = type_dispatch(node._args[1])
     if isinstance(node._args[1], r_ast.Func):
-        return mt_ast.OffsetsOfFunc(
-            left, right, optargs=optargs
-        )
+        return mt_ast.OffsetsOfFunc(left, right, optargs=optargs)
     else:
-        return mt_ast.OffsetsOfValue(
-            left, right, optargs=optargs
-        )
+        return mt_ast.OffsetsOfValue(left, right, optargs=optargs)
 
 
 @handles_type(r_ast.FunCall)
@@ -474,30 +439,18 @@ def handle_count(node):
     left = type_dispatch(node._args[0])
 
     if isinstance(left, mt_ast.GroupByField):
-        return mt_ast.CountGroup(
-            left,
-            optargs=optargs
-        )
+        return mt_ast.CountGroup(left, optargs=optargs)
 
     elif len(node._args) == 1:
-        return mt_ast.Count1(
-            left,
-            optargs=optargs
-        )
+        return mt_ast.Count1(left, optargs=optargs)
     else:
         right = type_dispatch(node._args[1])
-        if is_instance_of_any((r_ast.MakeObj, r_ast.Datum, r_ast.MakeArray), node._args[1]):
-            return mt_ast.CountByEq(
-                left,
-                right,
-                optargs=optargs
-            )
+        if is_instance_of_any(
+            (r_ast.MakeObj, r_ast.Datum, r_ast.MakeArray), node._args[1]
+        ):
+            return mt_ast.CountByEq(left, right, optargs=optargs)
         elif isinstance(node._args[1], r_ast.Func):
-            return mt_ast.CountByFunc(
-                left,
-                right,
-                optargs=optargs
-            )
+            return mt_ast.CountByFunc(left, right, optargs=optargs)
     raise TypeError
 
 
@@ -522,6 +475,7 @@ def handle_contains(node):
 #   the first parameter symbol of the `r_ast.Func`, recursing through its
 #   body, and replacing any ImplicitVar instances with Var(Datum(symbol)).
 #   Once that's done, the `Func` can be evaluated in the same way as any other.
+
 
 def contains_ivar(node):
     return r_ast._ivar_scan(node)

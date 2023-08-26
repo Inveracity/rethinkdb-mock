@@ -13,9 +13,9 @@ def real_stock_data_load(data, connection):
             # This db is special and can't be deleted.
             continue
         r.db_drop(db).run(connection)
-    for db_name, db_data in iteritems(data['dbs']):
+    for db_name, db_data in iteritems(data["dbs"]):
         r.db_create(db_name).run(connection)
-        for table_name, table_data in iteritems(db_data['tables']):
+        for table_name, table_data in iteritems(db_data["tables"]):
             r.db(db_name).table_create(table_name).run(connection)
             r.db(db_name).table(table_name).insert(table_data).run(connection)
 
@@ -31,29 +31,21 @@ def load_stock_data(data, connection):
         return real_stock_data_load(data, connection)
 
 
-def assertEqUnordered(x, y, msg=''):
+def assertEqUnordered(x, y, msg=""):
     for x_elem in x:
         assert x_elem in y
 
 
-def assertEqual(x, y, msg=''):
+def assertEqual(x, y, msg=""):
     assert x == y
 
 
 def as_db_and_table(db_name, table_name, data):
-    return {
-        'dbs': {
-            db_name: {
-                'tables': {
-                    table_name: data
-                }
-            }
-        }
-    }
+    return {"dbs": {db_name: {"tables": {table_name: data}}}}
 
 
 class TestCase(unittest.TestCase):
-    def assertEqUnordered(self, x, y, msg=''):
+    def assertEqUnordered(self, x, y, msg=""):
         return assertEqUnordered(x, y, msg)
 
     def assert_key_equality(self, keys, dict1, dict2):

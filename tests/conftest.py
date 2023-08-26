@@ -19,7 +19,8 @@ def pytest_addoption(parser):
         default="rethinkdb_mock",
         action="store",
         choices=["rethinkdb_mock", "rethink"],
-        help="Select whether tests are run on a rethinkdb_mock connection or rethink connection or both")
+        help="Select whether tests are run on a rethinkdb_mock connection or rethink connection or both",
+    )
 
 
 @pytest.fixture(scope="session")
@@ -35,7 +36,7 @@ def conn_sess(request):
         except OSError:
             pytest.exit("No rethinkdb binary found")
     elif conn_type == "rethinkdb_mock":
-        conn = MockThink(as_db_and_table('nothing', 'nothing', [])).get_conn()
+        conn = MockThink(as_db_and_table("nothing", "nothing", [])).get_conn()
     else:
         pytest.exit(f"Unknown rethinkdb_mock test connection type: {conn_type}")
     return conn

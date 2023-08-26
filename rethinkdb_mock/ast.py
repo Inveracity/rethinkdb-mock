@@ -8,6 +8,7 @@ import dateutil.parser
 from future.utils import iteritems
 from future.utils import text_type
 from past.utils import old_div
+from rethinkdb.errors import ReqlNonExistenceError
 
 from rethinkdb_mock import ast_base
 from rethinkdb_mock import joins
@@ -38,7 +39,7 @@ class RError0(RBase):
         pass
 
     def run(self, arg, conn):
-        self.raise_rql_runtime_error('DEFAULT MESSAGE')
+        self.raise_rql_runtime_error("DEFAULT MESSAGE")
 
 
 class RError1(MonExp):
@@ -53,7 +54,7 @@ class Uuid(RBase):
 
 class RDb(MonExp):
     def do_run(self, db_name, arg, scope):
-        if hasattr(self, 'mockdb_ref'):
+        if hasattr(self, "mockdb_ref"):
             db = self.mockdb_ref
         else:
             db = arg
@@ -66,28 +67,28 @@ class RDb(MonExp):
 class TypeOf(MonExp):
     def do_run(self, val, arg, scope):
         type_map = {
-            str: 'STRING',
-            dict: 'OBJECT',
-            int: 'NUMBER',
-            float: 'NUMBER',
-            bool: 'BOOL'
+            str: "STRING",
+            dict: "OBJECT",
+            int: "NUMBER",
+            float: "NUMBER",
+            bool: "BOOL",
         }
         if val is None:
-            return 'NULL'
+            return "NULL"
         else:
             val_type = type(val)
             if val_type in type_map:
                 return type_map[val_type]
             elif util.is_iterable(val):
-                return 'ARRAY'
+                return "ARRAY"
         raise TypeError
 
 
 class Distinct(MonExp):
     def do_run(self, table_or_seq, arg, scope):
-        if 'index' in self.optargs:
+        if "index" in self.optargs:
             # table
-            table_or_seq = table_or_seq._index_values(self.optargs['index'])
+            table_or_seq = table_or_seq._index_values(self.optargs["index"])
         return list(util.dictable_distinct(table_or_seq))
 
 
@@ -95,13 +96,13 @@ class Zip(MonExp):
     def do_run(self, sequence, arg, scope):
         out = []
         for elem in sequence:
-            out.append(util.extend(elem['left'], elem['right']))
+            out.append(util.extend(elem["left"], elem["right"]))
         return out
 
 
 class IsEmpty(MonExp):
     def do_run(self, left, arg, scope):
-        return (len(left) == 0)
+        return len(left) == 0
 
 
 class RVar(MonExp):
@@ -111,7 +112,7 @@ class RVar(MonExp):
 
 class Not(MonExp):
     def do_run(self, left, arg, scope):
-        return (not left)
+        return not left
 
 
 class Keys(MonExp):
@@ -121,12 +122,12 @@ class Keys(MonExp):
 
 class Asc(MonExp):
     def do_run(self, left, arg, scope):
-        return (left, 'ASC')
+        return (left, "ASC")
 
 
 class Desc(MonExp):
     def do_run(self, left, arg, scope):
-        return (left, 'DESC')
+        return (left, "DESC")
 
 
 class Json(MonExp):
@@ -152,19 +153,20 @@ class Bracket(BinExp):
 
 class Get(BinExp):
     def do_run(self, left, right, arg, scope):
-        return util.find_first(util.match_attr('id', right), left)
+        return util.find_first(util.match_attr("id", right), left)
 
 
 class GetAll(BinExp):
     def do_run(self, left, right, arg, scope):
-        if 'index' in self.optargs and self.optargs['index'] != 'id':
+        if "index" in self.optargs and self.optargs["index"] != "id":
             index_func, is_multi = self.find_index_func_for_scope(
-                self.optargs['index'],
-                arg
+                self.optargs["index"], arg
             )
             if isinstance(index_func, RFunc):
+
                 def map_fn(d):
                     return index_func.run([d], scope)
+
             else:
                 map_fn = index_func
 
@@ -179,8 +181,8 @@ class GetAll(BinExp):
                     indexed = set(indexed)
                     for match_item in right:
                         if match_item in indexed:
-                            if elem['id'] not in seen_ids:
-                                seen_ids.add(elem['id'])
+                            if elem["id"] not in seen_ids:
+                                seen_ids.add(elem["id"])
                                 result.append(elem)
                             break
             else:
@@ -190,7 +192,7 @@ class GetAll(BinExp):
             return result
 
         else:
-            return list(filter(util.match_attr_multi('id', right), left))
+            return list(filter(util.match_attr_multi("id", right), left))
 
 
 class BinOp(BinExp):
@@ -255,6 +257,12 @@ class Or(BinOp):
 
 class Reduce(ByFuncBase):
     def do_run(self, sequence, reduce_fn, arg, scope):
+        if len(sequence) == 0:
+            raise ReqlNonExistenceError("Cannot reduce over an empty stream")
+
+        if len(sequence) == 1:
+            return sequence[0]
+
         first, second = sequence[0:2]
         result = reduce_fn([first, second])
         for elem in sequence[2:]:
@@ -267,25 +275,27 @@ class UpdateBase(object):
         pass
 
     def get_update_settings(self):
-        defaults = {
-            'durability': 'hard',
-            'return_changes': False,
-            'non_atomic': False
-        }
+        defaults = {"durability": "hard", "return_changes": False, "non_atomic": False}
         return util.extend(defaults, self.optargs)
 
     def validate_nested_query_status(self):
-        if self.right.has_table_scope() and (not self.get_update_settings()['non_atomic']):
-            self.raise_rql_runtime_error('attempted nested query in update without non-atomic flag')
+        if self.right.has_table_scope() and (
+            not self.get_update_settings()["non_atomic"]
+        ):
+            self.raise_rql_runtime_error(
+                "attempted nested query in update without non-atomic flag"
+            )
 
     def update_table(self, result_sequence, arg, scope):
         settings = self.get_update_settings()
         current_db = self.find_db_scope()
         current_table = self.find_table_scope()
         result_sequence = util.ensure_list(result_sequence)
-        result, report = arg.update_by_id_in_table_in_db(current_db, current_table, result_sequence)
-        if not settings['return_changes']:
-            del report['changes']
+        result, report = arg.update_by_id_in_table_in_db(
+            current_db, current_table, result_sequence
+        )
+        if not settings["return_changes"]:
+            del report["changes"]
         return result, report
 
 
@@ -296,13 +306,16 @@ class UpdateByFunc(ByFuncBase, UpdateBase):
         def mapper(doc):
             ext_with = map_fn(doc)
             return ast_base.rql_merge_with(ext_with, doc)
+
         return self.update_table(util.maybe_map(mapper, sequence), arg, scope)
 
 
 class UpdateWithObj(BinExp, UpdateBase):
     def do_run(self, sequence, to_update, arg, scope):
         self.validate_nested_query_status()
-        return self.update_table(util.maybe_map(ast_base.rql_merge_with(to_update), sequence), arg, scope)
+        return self.update_table(
+            util.maybe_map(ast_base.rql_merge_with(to_update), sequence), arg, scope
+        )
 
 
 class Replace(BinExp, UpdateBase):
@@ -312,10 +325,7 @@ class Replace(BinExp, UpdateBase):
 
 class Delete(MonExp):
     def get_delete_settings(self):
-        defaults = {
-            'durability': 'hard',
-            'return_changes': False
-        }
+        defaults = {"durability": "hard", "return_changes": False}
         return util.extend(defaults, self.optargs)
 
     def do_run(self, sequence, arg, scope):
@@ -325,19 +335,17 @@ class Delete(MonExp):
             sequence = [sequence]
         else:
             sequence = list(sequence)
-        result, report = arg.remove_by_id_in_table_in_db(current_db, current_table, sequence)
-        if not self.get_delete_settings()['return_changes']:
-            del report['changes']
+        result, report = arg.remove_by_id_in_table_in_db(
+            current_db, current_table, sequence
+        )
+        if not self.get_delete_settings()["return_changes"]:
+            del report["changes"]
         return result, report
 
 
 class Insert(BinExp):
     def get_insert_settings(self):
-        defaults = {
-            'durability': 'hard',
-            'return_changes': False,
-            'conflict': 'error'
-        }
+        defaults = {"durability": "hard", "return_changes": False, "conflict": "error"}
         return util.extend(defaults, self.optargs)
 
     def do_run(self, sequence, to_insert, arg, scope):
@@ -348,19 +356,21 @@ class Insert(BinExp):
         generated_keys = list()
 
         def ensure_id(elem):
-            if ('id' not in elem) or (elem['id'] is None):
+            if ("id" not in elem) or (elem["id"] is None):
                 uid = text_type(uuid.uuid4())
-                elem = util.extend(elem, {'id': uid})
+                elem = util.extend(elem, {"id": uid})
                 generated_keys.append(uid)
             return elem
 
         to_insert = list(map(ensure_id, list(to_insert)))
         settings = self.get_insert_settings()
-        result, report = arg.insert_into_table_in_db(current_db, current_table, to_insert, conflict=settings['conflict'])
-        if not settings['return_changes']:
-            del report['changes']
+        result, report = arg.insert_into_table_in_db(
+            current_db, current_table, to_insert, conflict=settings["conflict"]
+        )
+        if not settings["return_changes"]:
+            del report["changes"]
         if generated_keys:
-            report['generated_keys'] = generated_keys
+            report["generated_keys"] = generated_keys
         return result, report
 
 
@@ -397,14 +407,19 @@ class PluckPoly(BinExp):
         return util.maybe_map(util.pluck_with(attrs), left)
 
 
-class MergePoly(BinExp):
-    def do_run(self, left, ext_with, arg, scope):
-        if ast_base.is_literal(ext_with):
-            self.raise_rql_runtime_error('invalid top-level r.literal()')
-        elif ast_base.has_nested_literal(ext_with):
-            self.raise_rql_runtime_error('invalid nested r.literal()')
+class MergePolyWithRFunc(ByFuncBase):
+    def do_run(self, sequence, map_fn, arg, scope):
+        def mapper(doc):
+            ext_with = map_fn(doc)
 
-        return util.maybe_map(ast_base.rql_merge_with(ext_with), left)
+            if ast_base.is_literal(ext_with):
+                self.raise_rql_runtime_error("invalid top-level r.literal()")
+            elif ast_base.has_nested_literal(ext_with):
+                self.raise_rql_runtime_error("invalid nested r.literal()")
+
+            return ast_base.rql_merge_with(ext_with, doc)
+
+        return util.maybe_map(mapper, sequence)
 
 
 class HasFields(BinExp):
@@ -565,7 +580,7 @@ class Random0(RBase):
 
 class Random1(MonExp):
     def do_run(self, max_num, arg, scope):
-        if 'float' in self.optargs and self.optargs['float']:
+        if "float" in self.optargs and self.optargs["float"]:
             return random.uniform(0, max_num)
         else:
             return random.randint(0, max_num)
@@ -573,7 +588,7 @@ class Random1(MonExp):
 
 class Random2(BinExp):
     def do_run(self, min_num, max_num, arg, scope):
-        if 'float' in self.optargs and self.optargs['float']:
+        if "float" in self.optargs and self.optargs["float"]:
             return random.uniform(min_num, max_num)
         else:
             return random.randint(min_num, max_num)
@@ -627,10 +642,7 @@ class Do(ByFuncBase):
 class UnGroup(MonExp):
     def do_run(self, grouped_seq, arg, scope):
         for group_name, group_vals in iteritems(grouped_seq):
-            yield {
-                'group': group_name,
-                'reduction': group_vals
-            }
+            yield {"group": group_name, "reduction": group_vals}
 
 
 class Branch(RBase):
@@ -668,7 +680,7 @@ class ContainsElems(BinExp):
 
 class ContainsFuncs(RBase):
     def __init__(self, left, right, optargs={}):
-        assert (isinstance(right, MakeArray))
+        assert isinstance(right, MakeArray)
         self.left = left
         self.right = right
         self.optargs = optargs
@@ -690,6 +702,7 @@ class ContainsFuncs(RBase):
 #   #################################
 #     Table and database manipulation
 #   #################################
+
 
 class TableCreate(BinExp):
     def do_run(self, left, table_name, arg, scope):
@@ -738,6 +751,7 @@ class TableListTL(RBase):
 
         return tables
 
+
 #   #################################
 #     Index manipulation functions
 #   #################################
@@ -748,13 +762,9 @@ class IndexCreateByField(BinExp):
         index_func = util.getter(field_name)
         current_db = self.find_db_scope()
         current_table = self.find_table_scope()
-        multi = self.optargs.get('multi', False)
+        multi = self.optargs.get("multi", False)
         return arg.create_index_in_table_in_db(
-            current_db,
-            current_table,
-            field_name,
-            index_func,
-            multi=multi
+            current_db, current_table, field_name, index_func, multi=multi
         )
 
 
@@ -770,13 +780,9 @@ class IndexCreateByFunc(RBase):
         index_func = self.right
         current_db = self.find_db_scope()
         current_table = self.find_table_scope()
-        multi = self.optargs.get('multi', False)
+        multi = self.optargs.get("multi", False)
         return arg.create_index_in_table_in_db(
-            current_db,
-            current_table,
-            index_name,
-            index_func,
-            multi=multi
+            current_db, current_table, index_name, index_func, multi=multi
         )
 
 
@@ -790,71 +796,53 @@ class IndexRename(Ternary):
         current_db = self.find_db_scope()
         current_table = self.find_table_scope()
 
-        exists = arg.index_exists_in_table_in_db(
-            current_db,
-            current_table,
-            new_name
-        )
+        exists = arg.index_exists_in_table_in_db(current_db, current_table, new_name)
         if exists:
-            if not self.optargs.get('overwrite', False):
-                raise Exception('tried to overwrite existing index!')
+            if not self.optargs.get("overwrite", False):
+                raise Exception("tried to overwrite existing index!")
 
         return arg.rename_index_in_table_in_db(
-            current_db,
-            current_table,
-            old_name,
-            new_name
+            current_db, current_table, old_name, new_name
         )
 
 
 class IndexDrop(BinExp):
     def do_run(self, sequence, index_name, arg, scope):
-        assert (isinstance(self.left, RTable))
+        assert isinstance(self.left, RTable)
         current_db = self.find_db_scope()
         current_table = self.find_table_scope()
 
-        return arg.drop_index_in_table_in_db(
-            current_db,
-            current_table,
-            index_name
-        )
+        return arg.drop_index_in_table_in_db(current_db, current_table, index_name)
 
 
 class IndexList(MonExp):
     def do_run(self, table, arg, scope):
-        assert (isinstance(self.left, RTable))
+        assert isinstance(self.left, RTable)
 
         current_db = self.find_db_scope()
         current_table = self.find_table_scope()
-        return arg.list_indexes_in_table_in_db(
-            current_db,
-            current_table
-        )
+        return arg.list_indexes_in_table_in_db(current_db, current_table)
 
 
 class IndexWaitAll(MonExp):
     def do_run(self, table, arg, scope):
-        assert (isinstance(self.left, RTable))
+        assert isinstance(self.left, RTable)
         return table
 
 
 class IndexWaitOne(BinExp):
     def do_run(self, table, index_name, arg, scope):
-        assert (isinstance(self.left, RTable))
+        assert isinstance(self.left, RTable)
         current_db = self.find_db_scope()
         current_table = self.find_table_scope()
-        exists = arg.index_exists_in_table_in_db(
-            current_db,
-            current_table,
-            index_name
-        )
-        assert (exists)
+        exists = arg.index_exists_in_table_in_db(current_db, current_table, index_name)
+        assert exists
         return table
 
 
 class Sync(MonExp):
     def do_run(self, table, arg, scope):
-        assert (isinstance(self.left, RTable))
+        assert isinstance(self.left, RTable)
         return table
 
 
@@ -889,12 +877,12 @@ class StrSplitOnLimit(Ternary):
 
 
 def operators_for_bounds(left_bound, right_bound):
-    if left_bound == 'closed':
+    if left_bound == "closed":
         left_oper = operator.ge
     else:
         left_oper = operator.gt
 
-    if right_bound == 'closed':
+    if right_bound == "closed":
         right_oper = operator.le
     else:
         right_oper = operator.lt
@@ -904,23 +892,16 @@ def operators_for_bounds(left_bound, right_bound):
 
 class Between(Ternary):
     def do_run(self, table, lower_key, upper_key, arg, scope):
-        defaults = {
-            'left_bound': 'closed',
-            'right_bound': 'open',
-            'index': 'id'
-        }
+        defaults = {"left_bound": "closed", "right_bound": "open", "index": "id"}
         options = util.extend(defaults, self.optargs)
 
-        if options['index'] == 'id':
-            map_fn = util.getter('id')
+        if options["index"] == "id":
+            map_fn = util.getter("id")
         else:
-            map_fn, _ = self.find_index_func_for_scope(
-                options['index'],
-                arg
-            )
+            map_fn, _ = self.find_index_func_for_scope(options["index"], arg)
 
         left_test, right_test = operators_for_bounds(
-            options['left_bound'], options['right_bound']
+            options["left_bound"], options["right_bound"]
         )
         for document in table:
             doc_val = map_fn(document)
@@ -952,9 +933,10 @@ class DeleteAt(BinExp):
 #   Joins
 # ###########
 
+
 class EqJoin(Ternary):
     def do_run(self, left, field, right, arg, scope):
-        return joins.do_eq_join(field, left, 'id', right)
+        return joins.do_eq_join(field, left, "id", right)
 
 
 class InnerOuterJoinBase(RBase):
@@ -986,6 +968,7 @@ class OuterJoin(InnerOuterJoinBase):
 # ############
 #   Time
 # ############
+
 
 class Year(MonExp):
     def do_run(self, dtime, arg, scope):
@@ -1062,15 +1045,12 @@ class Time(MonExp):
 
 class During(Ternary):
     def do_run(self, to_test, left, right, arg, scope):
-        defaults = {
-            'left_bound': 'closed',
-            'right_bound': 'open'
-        }
+        defaults = {"left_bound": "closed", "right_bound": "open"}
         options = util.extend(defaults, self.optargs)
         left_test, right_test = operators_for_bounds(
-            options['left_bound'], options['right_bound']
+            options["left_bound"], options["right_bound"]
         )
-        return (left_test(to_test, left) and right_test(to_test, right))
+        return left_test(to_test, left) and right_test(to_test, right)
 
 
 class StrMatch(RBase):
@@ -1109,7 +1089,7 @@ class CoerceTo(BinExp):
     def do_run(self, left, right, arg, scope):
         res = self.left.run(arg, scope)
         rname = self.right.run(arg, scope)
-        if rname.upper() == 'ARRAY':
+        if rname.upper() == "ARRAY":
             if isinstance(res, dict):
                 return list(res.items())
             return list(res)

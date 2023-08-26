@@ -38,8 +38,8 @@ rethinkdb = None
 
 
 def _rethink_server(request):
-    """ This does the actual work - there are several versions of this used
-        with different scopes.
+    """This does the actual work - there are several versions of this used
+    with different scopes.
     """
     test_server = RethinkDBServer()
     request.addfinalizer(lambda p=test_server: p.teardown())
@@ -47,32 +47,31 @@ def _rethink_server(request):
     return test_server
 
 
-@pytest.fixture(scope='function')
-@requires_config(CONFIG, ['rethink_executable'])
+@pytest.fixture(scope="function")
+@requires_config(CONFIG, ["rethink_executable"])
 def rethink_server(request):
-    """ Function-scoped RethinkDB server in a local thread.
+    """Function-scoped RethinkDB server in a local thread.
 
-        Attributes
-        ----------
-        conn: (``rethinkdb.Connection``)  Connection to this server instance
-        .. also inherits all attributes from the `workspace` fixture
+    Attributes
+    ----------
+    conn: (``rethinkdb.Connection``)  Connection to this server instance
+    .. also inherits all attributes from the `workspace` fixture
 
     """
     return _rethink_server(request)
 
 
-@pytest.fixture(scope='session')
-@requires_config(CONFIG, ['rethink_executable'])
+@pytest.fixture(scope="session")
+@requires_config(CONFIG, ["rethink_executable"])
 def rethink_server_sess(request):
-    """ Same as rethink_server fixture, scoped as session instead.
-    """
+    """Same as rethink_server fixture, scoped as session instead."""
     return _rethink_server(request)
 
 
 @pytest.fixture(scope="function")
 def rethink_unique_db(rethink_server_sess):
-    """ Starts up a session-scoped server, and returns a connection to
-        a unique database for the life of a single test, and drops it after
+    """Starts up a session-scoped server, and returns a connection to
+    a unique database for the life of a single test, and drops it after
     """
     dbid = uuid.uuid4().hex
     conn = rethink_server_sess.conn
@@ -84,9 +83,9 @@ def rethink_unique_db(rethink_server_sess):
 
 @pytest.fixture(scope="module")
 def rethink_module_db(rethink_server_sess):
-    """ Starts up a module-scoped server, and returns a connection to
-        a unique database for all the tests in one module.
-        Drops the database after module tests are complete.
+    """Starts up a module-scoped server, and returns a connection to
+    a unique database for all the tests in one module.
+    Drops the database after module tests are complete.
     """
     dbid = uuid.uuid4().hex
     conn = rethink_server_sess.conn
@@ -100,16 +99,19 @@ def rethink_module_db(rethink_server_sess):
 
 @pytest.fixture(scope="module")
 def rethink_make_tables(request, rethink_module_db):
-    """ Module-scoped fixture that creates all tables specified in the test
-        module attribute FIXTURE_TABLES.
+    """Module-scoped fixture that creates all tables specified in the test
+    module attribute FIXTURE_TABLES.
 
     """
-    reqd_table_list = getattr(request.module, 'FIXTURE_TABLES')
+    reqd_table_list = getattr(request.module, "FIXTURE_TABLES")
     log.debug("Do stuff before all module tests with {0}".format(reqd_table_list))
     conn = rethink_module_db
     for table_name, primary_key in reqd_table_list:
         try:
-            r.db(conn.db).table_create(table_name, primary_key=primary_key,).run(conn)
+            r.db(conn.db).table_create(
+                table_name,
+                primary_key=primary_key,
+            ).run(conn)
             log.info('Made table "{0}" with key "{1}"'.format(table_name, primary_key))
         except rethinkdb.errors.RqlRuntimeError as err:
             log.debug('Table "{0}" not made: {1}'.format(table_name, err.message))
@@ -117,14 +119,14 @@ def rethink_make_tables(request, rethink_module_db):
 
 @pytest.fixture(scope="function")
 def rethink_empty_db(request, rethink_module_db, rethink_make_tables):
-    """ Function-scoped fixture that will empty all the tables defined
-        for the `rethink_make_tables` fixture.
+    """Function-scoped fixture that will empty all the tables defined
+    for the `rethink_make_tables` fixture.
 
-        This is a useful approach, because of the long time taken to
-        create a new RethinkDB table, compared to the time to empty one.
+    This is a useful approach, because of the long time taken to
+    create a new RethinkDB table, compared to the time to empty one.
     """
     tables_to_emptied = (
-        table[0] for table in getattr(request.module, 'FIXTURE_TABLES')
+        table[0] for table in getattr(request.module, "FIXTURE_TABLES")
     )
     conn = rethink_module_db
 
@@ -160,14 +162,18 @@ class RethinkDBServer(TestServerV2):
 
     def get_args(self, **kwargs):
         cmd = [
-            '--bind', self._listen_hostname,
-            '--driver-port', str(self.port),
-            '--http-port', str(self.http_port),
-            '--cluster-port', str(self.cluster_port),
+            "--bind",
+            self._listen_hostname,
+            "--driver-port",
+            str(self.port),
+            "--http-port",
+            str(self.http_port),
+            "--cluster-port",
+            str(self.cluster_port),
         ]
 
-        if 'workspace' in kwargs:
-            cmd += ['--directory', str(kwargs['workspace'] / 'db')]
+        if "workspace" in kwargs:
+            cmd += ["--directory", str(kwargs["workspace"] / "db")]
 
         return cmd
 
@@ -189,14 +195,13 @@ class RethinkDBServer(TestServerV2):
 
     def check_server_up(self):
         """Test connection to the server."""
-        log.info("Connecting to RethinkDB at {0}:{1}".format(
-            self.hostname, self.port))
+        log.info("Connecting to RethinkDB at {0}:{1}".format(self.hostname, self.port))
 
         if not self.hostname:
             return False
 
         try:
-            self.conn = r.connect(host=self.hostname, port=self.port, db='test')
+            self.conn = r.connect(host=self.hostname, port=self.port, db="test")
             return True
         except rethinkdb.errors.RqlDriverError as err:
             log.warning(err)

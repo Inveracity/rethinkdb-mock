@@ -15,25 +15,26 @@ class AttrHaving(object):
 #   Base classes
 # #################
 
+
 class RBase(object):
     def __init__(self, *args):
         pass
 
     def find_table_scope(self):
         result = None
-        if hasattr(self, 'left'):
+        if hasattr(self, "left"):
             result = self.left.find_table_scope()
         return result
 
     def find_db_scope(self):
         result = None
-        if hasattr(self, 'left'):
+        if hasattr(self, "left"):
             result = self.left.find_db_scope()
         return result
 
     def has_table_scope(self):
         result = None
-        for part in ('left', 'middle', 'right'):
+        for part in ("left", "middle", "right"):
             if hasattr(self, part):
                 result = getattr(self, part).has_table_scope()
                 if result:
@@ -43,14 +44,8 @@ class RBase(object):
     def find_index_func_for_scope(self, index_name, db_arg):
         db_scope = self.find_db_scope()
         table_scope = self.find_table_scope()
-        func = db_arg.get_index_func_in_table_in_db(
-            db_scope,
-            table_scope,
-            index_name
-        )
-        is_multi = db_arg.is_multi_index(
-            db_scope, table_scope, index_name
-        )
+        func = db_arg.get_index_func_in_table_in_db(db_scope, table_scope, index_name)
+        is_multi = db_arg.is_multi_index(db_scope, table_scope, index_name)
         return func, is_multi
 
     def raise_rql_runtime_error(self, msg):
@@ -59,23 +54,19 @@ class RBase(object):
         # temporary jankiness to get it working
         # doing it this way means error messages won't
         # be properly printed
-        term = AttrHaving({
-            'args': (),
-            'optargs': {},
-            'compose': (lambda x, y: 'COMPOSED')
-        })
+        term = AttrHaving(
+            {"args": (), "optargs": {}, "compose": (lambda x, y: "COMPOSED")}
+        )
         raise RqlRuntimeError(msg, term, [])
 
     def raise_rql_compile_error(self, msg):
-        term = AttrHaving({
-            'args': (),
-            'optargs': {},
-            'compose': (lambda x, y: 'COMPOSED')
-        })
+        term = AttrHaving(
+            {"args": (), "optargs": {}, "compose": (lambda x, y: "COMPOSED")}
+        )
         raise RqlCompileError(msg, term, [])
 
     def set_mock_ref(self, other):
-        if hasattr(self, 'mockdb_ref'):
+        if hasattr(self, "mockdb_ref"):
             other.mockdb_ref = self.mockdb_ref
 
 
@@ -121,7 +112,9 @@ class MonExp(RBase):
         return f"<{class_name}: {self.left}>"
 
     def do_run(self, left, arg, scope):
-        raise NotImplementedError(f"method do_run not defined in class {self.__class__.__name__}")
+        raise NotImplementedError(
+            f"method do_run not defined in class {self.__class__.__name__}"
+        )
 
     def run(self, arg, scope):
         self.set_mock_ref(self.left)
@@ -140,7 +133,9 @@ class BinExp(RBase):
         return f"<{class_name}: ({self.left}, {self.right})>"
 
     def do_run(self, left, right, arg, scope):
-        raise NotImplementedError(f"method do_run not defined in class {self.__class__.__name__}")
+        raise NotImplementedError(
+            f"method do_run not defined in class {self.__class__.__name__}"
+        )
 
     def run(self, arg, scope):
         self.set_mock_ref(self.left)
@@ -158,10 +153,12 @@ class Ternary(RBase):
         self.optargs = optargs
 
     def do_run(self, left, middle, right, arg, scope):
-        raise NotImplementedError(f"method do_run not defined in class {self.__class__.__name__}")
+        raise NotImplementedError(
+            f"method do_run not defined in class {self.__class__.__name__}"
+        )
 
     def run(self, arg, scope):
-        for part in ('left', 'middle', 'right'):
+        for part in ("left", "middle", "right"):
             self.set_mock_ref(getattr(self, part))
         left = self.left.run(arg, scope)
         middle = self.middle.run(arg, scope)
@@ -176,7 +173,9 @@ class ByFuncBase(RBase):
         self.optargs = optargs
 
     def do_run(self, left, map_fn, arg, scope):
-        raise NotImplementedError(f"method do_run not defined in class {self.__class__.__name__}")
+        raise NotImplementedError(
+            f"method do_run not defined in class {self.__class__.__name__}"
+        )
 
     def run(self, arg, scope):
         self.set_mock_ref(self.left)
@@ -278,12 +277,12 @@ def rql_merge_with(ext_with, to_extend):
     out.update(to_extend)
     if is_literal(ext_with):
         if has_nested_literal(ext_with):
-            raise RqlRuntimeError('No nested r.literal()!')
+            raise RqlRuntimeError("No nested r.literal()!")
 
     for k, v in iteritems(ext_with):
         if is_literal(v):
             if has_nested_literal(v):
-                raise RqlRuntimeError('No nested r.literal()!')
+                raise RqlRuntimeError("No nested r.literal()!")
 
         if k not in to_extend:
             out[k] = util.clone(v)
@@ -292,9 +291,13 @@ def rql_merge_with(ext_with, to_extend):
             if is_literal(v):
                 out[k] = util.clone(v)
             else:
-                if isinstance(d1_val, dict) and (isinstance(v, dict) or isinstance(v, LITERAL_OBJECT)):
+                if isinstance(d1_val, dict) and (
+                    isinstance(v, dict) or isinstance(v, LITERAL_OBJECT)
+                ):
                     out[k] = rql_merge_with(v, d1_val)
-                elif isinstance(d1_val, list) and (isinstance(v, list) or isinstance(v, LITERAL_LIST)):
+                elif isinstance(d1_val, list) and (
+                    isinstance(v, list) or isinstance(v, LITERAL_LIST)
+                ):
                     out[k] = util.cat(d1_val, v)
                 else:
                     out[k] = util.clone(v)
