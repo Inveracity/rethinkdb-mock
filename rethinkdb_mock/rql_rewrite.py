@@ -21,7 +21,7 @@ def type_dispatch(rql_node):
 @util.curry2
 def handles_type(rql_type, func):
     def handler(node):
-        assert type(node) == rql_type
+        assert type(node) is rql_type
         return func(node)
 
     RQL_TYPE_HANDLERS[rql_type] = handler
