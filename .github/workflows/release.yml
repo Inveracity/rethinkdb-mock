@@ -3,9 +3,6 @@ name: Release to pypi.org
 on:
   release:
     types: [published]
-    tags-ignore:
-      - "**dev**"
-      - "**rc**"
 
   workflow_dispatch:
     inputs:
