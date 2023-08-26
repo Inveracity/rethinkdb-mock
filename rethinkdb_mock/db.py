@@ -8,8 +8,6 @@ import rethinkdb.ast as r_ast
 from . import rtime
 from . import util
 from .rql_rewrite import rewrite_query
-from .ast_base import BinExp
-from .rql_rewrite import RQL_TYPE_TRANSLATIONS
 from .scope import Scope
 
 
@@ -183,7 +181,6 @@ class MockDbData(object):
 
 class MockDb(object):
     def __init__(self, dbs_by_name, default_db=None):
-
         self.dbs_by_name = dbs_by_name
         self.default_db = default_db
 
@@ -309,7 +306,6 @@ def objects_from_pods(data):
     return MockDb(dbs_by_name, default_db)
 
 
-
 def set_default_db(query, name):
     NEEDS_DB_AST = [
         r_ast.TableListTL.term_type,
@@ -336,7 +332,6 @@ def set_default_db(query, name):
         # We already have the DB
         if len(query._args) != 2:
             query._args = [rethinkdb.ast.DB(name)] + query._args
-
 
 
 class MockThinkConn(object):
