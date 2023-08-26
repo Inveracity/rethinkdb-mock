@@ -102,28 +102,28 @@ class TestRandom(MockTest):
         result = r.random().run(conn)
         assert result <= 1
         assert result >= 0
-        assert type(result) == float
+        assert type(result) is float
 
     def test_random_1(self, conn):
         result = r.random(10).run(conn)
         assert result <= 10
         assert result >= 0
-        assert type(result) == int
+        assert type(result) is int
 
     def test_random_1_float(self, conn):
         result = r.random(10).run(conn)
         assert result <= 10
         assert result >= 0
-        assert type(result) == int
+        assert type(result) is int
 
     def test_random_2(self, conn):
         result = r.random(10, 20).run(conn)
         assert result <= 20
         assert result >= 10
-        assert type(result) == int
+        assert type(result) is int
 
     def test_random_2_float(self, conn):
         result = r.random(10, 20, float=True).run(conn)
         assert result <= 20
         assert result >= 10
-        assert type(result) == float
+        assert type(result) is float
