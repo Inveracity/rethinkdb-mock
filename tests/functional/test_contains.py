@@ -105,4 +105,7 @@ class TestContains(MockTest):
             )
             .run(conn)
         )
-        assertEqual(expected, list(result))
+        assertEqual(
+            sorted(expected, key=lambda d: d["id"]),
+            sorted(list(result), key=lambda d: d["id"]),
+        )
